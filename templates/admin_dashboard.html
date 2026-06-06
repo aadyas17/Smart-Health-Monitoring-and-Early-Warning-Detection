@@ -1,0 +1,501 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+@keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:none; } }
+@keyframes spin   { to { transform:rotate(360deg); } }
+
+body {
+  background:
+    radial-gradient(circle at top left, rgba(79,70,229,0.10), transparent 28%),
+    radial-gradient(circle at top right, rgba(13,148,136,0.08), transparent 24%),
+    linear-gradient(180deg, #f8fafc 0%, #f8fafc 100%);
+}
+
+.dash-header {
+  display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap;
+  gap:14px; margin-bottom:24px; animation:fadeUp 0.4s ease both;
+}
+.dash-header h1 { font-size:19px; font-weight:700; color:#0d1f2d; margin:0; letter-spacing:0.08em; text-transform:uppercase; }
+.dash-header-actions { display:flex; gap:8px; flex-wrap:wrap; }
+
+.action-btn {
+  padding:8px 16px; font-size:13px; font-weight:700;
+  font-family:'Inter','DM Sans',system-ui,sans-serif;
+  letter-spacing:0.05em; text-transform:uppercase;
+  border:1px solid #dceaf3; border-radius:8px; cursor:pointer;
+  display:inline-flex; align-items:center; gap:6px;
+  transition:all 0.15s; text-decoration:none;
+  box-shadow:0 4px 14px rgba(13,31,45,0.06);
+}
+.action-btn.primary   { background:#4f46e5; color:#fff; border-color:#4f46e5; box-shadow:0 4px 14px rgba(79,70,229,0.39); }
+.action-btn.primary:hover { background:#4338ca; }
+.action-btn.secondary { background:#0d9488; color:#fff; border-color:#0d9488; box-shadow:0 4px 14px rgba(13,148,136,0.28); }
+.action-btn.secondary:hover { background:#0b7c71; }
+.action-btn.warning   { background:#0f6b9b; color:#fff; border-color:#0f6b9b; box-shadow:0 4px 14px rgba(15,107,155,0.28); }
+.action-btn.warning:hover { background:#0a4e76; }
+
+.kpi-row { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px; }
+@media (max-width:768px) { .kpi-row { grid-template-columns:repeat(2,1fr); } }
+
+.kpi-card {
+  background:#fff; border:1px solid rgba(15,107,155,0.1); border-radius:12px;
+  padding:18px 20px; cursor:pointer;
+  box-shadow:0 1px 3px rgba(13,31,45,0.04),0 4px 12px rgba(13,31,45,0.06);
+  transition:box-shadow 0.2s,transform 0.2s; animation:fadeUp 0.5s ease both;
+}
+.kpi-card:nth-child(2) { animation-delay:0.05s; }
+.kpi-card:nth-child(3) { animation-delay:0.1s; }
+.kpi-card:nth-child(4) { animation-delay:0.15s; }
+.kpi-card:hover { box-shadow:0 4px 8px rgba(13,31,45,0.06),0 16px 40px rgba(13,31,45,0.1); transform:translateY(-2px); }
+
+.kpi-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+.kpi-icon { width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:14px; box-shadow:0 4px 14px rgba(79,70,229,0.12); }
+.kpi-val { font-size:1.8rem; font-weight:500; color:#0d1f2d; line-height:1; }
+.kpi-label { font-size:12.5px; color:#4d7a94; margin-top:4px; }
+
+.charts-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px; }
+@media (max-width:768px) { .charts-row { grid-template-columns:1fr; } }
+
+.panel {
+  background:#fff; border:1px solid rgba(15,107,155,0.1); border-radius:14px;
+  box-shadow:0 1px 3px rgba(13,31,45,0.04),0 4px 12px rgba(13,31,45,0.06);
+  overflow:hidden; margin-bottom:20px; animation:fadeUp 0.5s ease both;
+}
+
+.panel-header {
+  padding:14px 20px; border-bottom:1px solid #f4f8fb;
+  font-size:13.5px; font-weight:600; color:#0d1f2d;
+  display:flex; align-items:center; gap:8px;
+}
+.panel-header i { color:#8fb8cc; font-size:13px; }
+.panel-header.danger-hd { background:linear-gradient(90deg, rgba(79,70,229,0.08), rgba(13,148,136,0.05)); }
+.panel-header.danger-hd i { color:#4f46e5; }
+.panel-header.danger-hd span { color:#3730a3; }
+
+.panel-body { padding:20px; }
+
+.summary-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.summary-item { padding:12px 14px; background:#f4f8fb; border-radius:8px; }
+.summary-label { font-size:11.5px; color:#4d7a94; margin-bottom:3px; }
+.summary-val   { font-size:16px; font-weight:500; color:#0d1f2d; }
+
+table { width:100%; border-collapse:collapse; font-size:13px; }
+thead th {
+  background:#f4f8fb; color:#4d7a94; font-size:11px; font-weight:500;
+  text-transform:uppercase; letter-spacing:0.06em;
+  padding:10px 14px; border-bottom:1px solid #e8f1f7; white-space:nowrap;
+}
+tbody td { padding:11px 14px; border-bottom:1px solid #f4f8fb; color:#2a4a5e; vertical-align:middle; }
+tbody tr:last-child td { border-bottom:none; }
+tbody tr:hover td { background:#f9fbfd; }
+
+.risk-badge { display:inline-block; font-size:11px; font-weight:500; padding:3px 10px; border-radius:20px; }
+.risk-high   { background:#fee2e2; color:#991b1b; }
+.risk-medium { background:#fef3c7; color:#92400e; }
+.risk-low    { background:#dcfce7; color:#166534; }
+
+.del-btn {
+  padding:5px 10px; font-size:11.5px; font-weight:500;
+  font-family:'DM Sans',system-ui,sans-serif;
+  background:#eef2ff; color:#4f46e5;
+  border:1px solid #c7d2fe; border-radius:6px;
+  cursor:pointer; transition:all 0.15s;
+}
+.del-btn:hover { background:#e0e7ff; }
+
+.alert-item {
+  padding:14px 16px; border-radius:10px; margin-bottom:10px;
+  background:#eef2ff; border:1px solid #c7d2fe;
+  animation:fadeUp 0.3s ease both;
+}
+.alert-item-title { font-size:13px; font-weight:600; color:#3730a3; margin-bottom:6px; }
+.alert-item-body  { font-size:12.5px; color:#4338ca; line-height:1.6; }
+
+.dismiss-btn {
+  margin-top:10px; padding:5px 12px; font-size:12px; font-weight:500;
+  font-family:'DM Sans',system-ui,sans-serif;
+  background:#fff; color:#4f46e5; border:1px solid #c7d2fe;
+  border-radius:6px; cursor:pointer; transition:all 0.15s;
+}
+.dismiss-btn:hover { background:#e0e7ff; }
+
+.status-select {
+  font-size:12px; font-family:'DM Sans',system-ui,sans-serif;
+  padding:4px 8px; border:1px solid #dceaf3; border-radius:6px;
+  background:#f4f8fb; color:#2a4a5e; cursor:pointer;
+}
+.status-select:focus { outline:none; border-color:#0f6b9b; }
+
+.no-data { text-align:center; color:#8fb8cc; padding:32px; font-size:13px; }
+
+.scroll-table { max-height:380px; overflow-y:auto; }
+.scroll-table::-webkit-scrollbar { width:4px; }
+.scroll-table::-webkit-scrollbar-thumb { background:#dceaf3; border-radius:4px; }
+
+.toast-wrap {
+  position:fixed; top:20px; right:20px; z-index:9999;
+  display:flex; flex-direction:column; gap:8px; pointer-events:none;
+}
+
+.toast-item {
+  background:#0d1f2d; color:#fff; padding:11px 16px;
+  border-radius:10px; font-size:13px;
+  box-shadow:0 8px 32px rgba(0,0,0,0.2);
+  display:flex; align-items:center; gap:8px;
+  animation:fadeUp 0.25s ease both; pointer-events:auto;
+  max-width:280px; border-left:3px solid #34d399;
+}
+.toast-item.error { border-left-color:#f87171; }
+</style>
+
+<div class="dash-header">
+  <div>
+    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.14em;color:#8fb8cc;margin-bottom:3px;">Surveillance Command</div>
+    <h1>Surveillance Dashboard</h1>
+  </div>
+  <div class="dash-header-actions">
+    <a href="/admin/dashboard" class="action-btn primary"><i class="fas fa-chart-line" style="font-size:11px;"></i> Dashboard</a>
+    <a href="/admin/control" class="action-btn warning"><i class="fas fa-cogs" style="font-size:11px;"></i> Control Panel</a>
+    <button onclick="refreshData()" class="action-btn secondary"><i class="fas fa-sync-alt" style="font-size:11px;"></i> Refresh</button>
+  </div>
+</div>
+
+<!-- KPIs -->
+<div class="kpi-row">
+  <div class="kpi-card" onclick="window.location.href='/admin/control'">
+    <div class="kpi-top">
+      <div class="kpi-icon" style="background:#eff8ff;color:#0f6b9b;"><i class="fas fa-chart-line"></i></div>
+    </div>
+    <div class="kpi-val" id="totalPredictions">0</div>
+    <div class="kpi-label">Total predictions</div>
+  </div>
+  <div class="kpi-card" onclick="showHighRiskAlerts()">
+    <div class="kpi-top">
+      <div class="kpi-icon" style="background:#eef2ff;color:#4f46e5;"><i class="fas fa-exclamation-triangle"></i></div>
+    </div>
+    <div class="kpi-val" id="highRiskCount">0</div>
+    <div class="kpi-label">High risk areas</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-top">
+      <div class="kpi-icon" style="background:#eef2ff;color:#4f46e5;"><i class="fas fa-chart-bar"></i></div>
+    </div>
+    <div class="kpi-val" id="mediumRiskCount">0</div>
+    <div class="kpi-label">Medium risk</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-top">
+      <div class="kpi-icon" style="background:#eef2ff;color:#4f46e5;"><i class="fas fa-file-alt"></i></div>
+    </div>
+    <div class="kpi-val" id="totalComplaints">0</div>
+    <div class="kpi-label">Total complaints</div>
+  </div>
+</div>
+
+<!-- CHARTS -->
+<div class="charts-row">
+  <div class="panel">
+    <div class="panel-header"><i class="fas fa-chart-pie"></i> Risk Distribution</div>
+    <div class="panel-body"><canvas id="riskChart" height="230"></canvas></div>
+  </div>
+  <div class="panel">
+    <div class="panel-header"><i class="fas fa-chart-line"></i> Water Quality Trends</div>
+    <div class="panel-body"><canvas id="qualityChart" height="230"></canvas></div>
+  </div>
+</div>
+
+<!-- ALERTS -->
+<div class="panel" id="alertsPanel">
+  <div class="panel-header danger-hd">
+    <i class="fas fa-bell"></i>
+    <span>Alert System — High Risk Areas</span>
+  </div>
+  <div class="panel-body" id="alertsList">
+    <p class="no-data">Loading alerts...</p>
+  </div>
+</div>
+
+<!-- COMPLAINT STATUS + SUMMARY -->
+<div class="charts-row">
+  <div class="panel">
+    <div class="panel-header"><i class="fas fa-chart-bar"></i> Complaint Status</div>
+    <div class="panel-body"><canvas id="complaintChart" height="230"></canvas></div>
+  </div>
+  <div class="panel">
+    <div class="panel-header"><i class="fas fa-info-circle"></i> Summary Statistics</div>
+    <div class="panel-body">
+      <div class="summary-grid">
+        <div class="summary-item">
+          <div class="summary-label">Total Predictions</div>
+          <div class="summary-val" id="statTotalPredictions">0</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-label">High Risk</div>
+          <div class="summary-val" style="color:#be3a3a;" id="statHighRisk">0</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-label">Medium Risk</div>
+          <div class="summary-val" style="color:#d97706;" id="statMediumRisk">0</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-label">Low Risk</div>
+          <div class="summary-val" style="color:#166534;" id="statLowRisk">0</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-label">Pending Complaints</div>
+          <div class="summary-val" id="statPendingComplaints">0</div>
+        </div>
+        <div class="summary-item">
+          <div class="summary-label">Resolved Complaints</div>
+          <div class="summary-val" id="statResolvedComplaints">0</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PREDICTIONS TABLE -->
+<div class="panel">
+  <div class="panel-header"><i class="fas fa-database"></i> All Predictions</div>
+  <div class="scroll-table">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th><th>ASHA Worker</th><th>Location</th>
+          <th>Temp</th><th>pH</th><th>Turbidity</th>
+          <th>Risk Level</th><th>Date</th><th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="predictionsList">
+        <tr><td colspan="9" class="no-data">Loading...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- COMPLAINTS TABLE -->
+<div class="panel">
+  <div class="panel-header"><i class="fas fa-comments"></i> Citizen Complaints</div>
+  <div class="scroll-table">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th><th>Citizen</th><th>Location</th><th>Sub-location</th>
+          <th>Symptoms</th><th>Water Issues</th><th>Status</th><th>Date</th><th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="complaintsList">
+        <tr><td colspan="9" class="no-data">Loading...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+let riskChart, qualityChart, complaintChart;
+
+function formatDate(dateString) {
+  if (!dateString) return 'N/A';
+  try {
+    return new Date(dateString).toLocaleString('en-IN', { year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', hour12:true });
+  } catch(e) { return dateString; }
+}
+
+function getRiskText(risk) {
+  if (!risk) return 'Medium';
+  const r = String(risk);
+  if (r === '0' || /^high$/i.test(r)) return 'High';
+  if (r === '1' || /^medium$/i.test(r)) return 'Medium';
+  if (r === '2' || /^low$/i.test(r)) return 'Low';
+  return r;
+}
+
+function getRiskClass(risk) {
+  var r = (risk || '').toLowerCase();
+  if (r === 'high') return 'risk-high';
+  if (r === 'medium') return 'risk-medium';
+  return 'risk-low';
+}
+
+async function loadDashboardData() {
+  try {
+    const statsResponse = await axios.get('/api/admin/stats');
+    const stats = statsResponse.data;
+
+    document.getElementById('totalPredictions').textContent = stats.total_predictions || 0;
+    document.getElementById('highRiskCount').textContent = stats.high_risk || 0;
+    document.getElementById('mediumRiskCount').textContent = stats.medium_risk || 0;
+    document.getElementById('totalComplaints').textContent = stats.total_complaints || 0;
+    document.getElementById('statTotalPredictions').textContent = stats.total_predictions || 0;
+    document.getElementById('statHighRisk').textContent = stats.high_risk || 0;
+    document.getElementById('statMediumRisk').textContent = stats.medium_risk || 0;
+    document.getElementById('statLowRisk').textContent = stats.low_risk || 0;
+    document.getElementById('statPendingComplaints').textContent = stats.pending_complaints || 0;
+    document.getElementById('statResolvedComplaints').textContent = (stats.total_complaints - stats.pending_complaints) || 0;
+
+    const predictionsResponse = await axios.get('/api/admin/predictions');
+    let predictions = predictionsResponse.data.map(function(p) {
+      return Object.assign({}, p, { prediction: getRiskText(p.prediction) });
+    });
+
+    const highCount   = predictions.filter(function(p) { return p.prediction.toLowerCase() === 'high'; }).length;
+    const mediumCount = predictions.filter(function(p) { return p.prediction.toLowerCase() === 'medium'; }).length;
+    const lowCount    = predictions.filter(function(p) { return p.prediction.toLowerCase() === 'low'; }).length;
+
+    if (riskChart) riskChart.destroy();
+    riskChart = new Chart(document.getElementById('riskChart').getContext('2d'), {
+      type: 'doughnut',
+      data: {
+        labels: ['High Risk', 'Medium Risk', 'Low Risk'],
+        datasets: [{ data: [highCount, mediumCount, lowCount], backgroundColor: ['#4f46e5', '#818cf8', '#0d9488'], borderWidth: 0 }]
+      },
+      options: { responsive:true, maintainAspectRatio:true, plugins:{ legend:{ position:'bottom', labels:{ font:{ size:12 }, padding:16 } } } }
+    });
+
+    const last10 = predictions.slice(0, 10).reverse();
+    if (qualityChart) qualityChart.destroy();
+    qualityChart = new Chart(document.getElementById('qualityChart').getContext('2d'), {
+      type: 'line',
+      data: {
+        labels: last10.map(function(p, i) { return 'S' + (i + 1); }),
+        datasets: [
+          { label:'pH', data: last10.map(function(p) { return p.ph || 0; }), borderColor:'#0f6b9b', backgroundColor:'rgba(15,107,155,0.07)', fill:true, tension:0.4, borderWidth:2 },
+          { label:'Turbidity', data: last10.map(function(p) { return p.turbidity || 0; }), borderColor:'#d97706', backgroundColor:'rgba(217,119,6,0.07)', fill:true, tension:0.4, borderWidth:2 }
+        ]
+      },
+      options: { responsive:true, maintainAspectRatio:true, scales:{ y:{ beginAtZero:true, ticks:{ font:{ size:11 } } }, x:{ ticks:{ font:{ size:11 } } } }, plugins:{ legend:{ labels:{ font:{ size:12 } } } } }
+    });
+
+    var predTbody = document.getElementById('predictionsList');
+    predTbody.innerHTML = predictions.length === 0
+      ? '<tr><td colspan="9" class="no-data">No predictions found</td></tr>'
+      : predictions.map(function(p) {
+          var rc = getRiskClass(p.prediction);
+          return '<tr>' +
+            '<td>' + p.id + '</td>' +
+            '<td>' + (p.asha_name || 'N/A') + '</td>' +
+            '<td>' + (p.location || 'N/A') + '</td>' +
+            '<td>' + p.temperature + '&deg;C</td>' +
+            '<td>' + p.ph + '</td>' +
+            '<td>' + p.turbidity + ' NTU</td>' +
+            '<td><span class="risk-badge ' + rc + '">' + p.prediction + '</span></td>' +
+            '<td>' + formatDate(p.date) + '</td>' +
+            '<td><button class="del-btn" onclick="deleteItem(\'prediction\',' + p.id + ')"><i class="fas fa-trash"></i></button></td>' +
+            '</tr>';
+        }).join('');
+
+    const complaintsResponse = await axios.get('/api/admin/complaints');
+    const complaints = complaintsResponse.data;
+
+    const pendingCount  = complaints.filter(function(c) { return c.status === 'pending'; }).length;
+    const resolvedCount = complaints.filter(function(c) { return c.status === 'resolved'; }).length;
+
+    if (complaintChart) complaintChart.destroy();
+    complaintChart = new Chart(document.getElementById('complaintChart').getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: ['Pending', 'Resolved'],
+        datasets: [{ label:'Complaints', data:[pendingCount, resolvedCount], backgroundColor:['#d97706','#0d9488'], borderWidth:0, borderRadius:6 }]
+      },
+      options: { responsive:true, maintainAspectRatio:true, scales:{ y:{ beginAtZero:true, ticks:{ stepSize:1, font:{ size:11 } } }, x:{ ticks:{ font:{ size:11 } } } }, plugins:{ legend:{ display:false } } }
+    });
+
+    var compTbody = document.getElementById('complaintsList');
+    compTbody.innerHTML = complaints.length === 0
+      ? '<tr><td colspan="9" class="no-data">No complaints found</td></tr>'
+      : complaints.map(function(c) {
+          return '<tr>' +
+            '<td>' + c.id + '</td>' +
+            '<td>' + (c.local_name || 'N/A') + '</td>' +
+            '<td>' + c.location + '</td>' +
+            '<td>' + c.sub_location + '</td>' +
+            '<td style="max-width:120px;">' + (c.symptoms ? c.symptoms.join(', ') : 'None') + '</td>' +
+            '<td style="max-width:120px;">' + (c.water_issues ? c.water_issues.join(', ') : 'None') + '</td>' +
+            '<td><select class="status-select" data-id="' + c.id + '"><option value="pending"' + (c.status === 'pending' ? ' selected' : '') + '>Pending</option><option value="resolved"' + (c.status === 'resolved' ? ' selected' : '') + '>Resolved</option></select></td>' +
+            '<td>' + formatDate(c.date) + '</td>' +
+            '<td><button class="del-btn" onclick="deleteItem(\'complaint\',' + c.id + ')"><i class="fas fa-trash"></i></button></td>' +
+            '</tr>';
+        }).join('');
+
+    document.querySelectorAll('.status-select').forEach(function(sel) {
+      sel.removeEventListener('change', handleStatusChange);
+      sel.addEventListener('change', handleStatusChange);
+    });
+
+    var highRiskPredictions = predictions.filter(function(p) { return p.prediction.toLowerCase() === 'high'; });
+    var alertsDiv = document.getElementById('alertsList');
+
+    if (highRiskPredictions.length === 0) {
+      alertsDiv.innerHTML = '<div style="padding:14px;background:#f0fdf4;border-radius:10px;border:1px solid #bbf7d0;font-size:13px;color:#14532d;"><i class="fas fa-check-circle" style="margin-right:8px;"></i>No active high-risk alerts at this time.</div>';
+    } else {
+      alertsDiv.innerHTML = highRiskPredictions.map(function(p) {
+        return '<div class="alert-item">' +
+          '<div class="alert-item-title"><i class="fas fa-exclamation-triangle" style="margin-right:6px;"></i>High Risk Alert</div>' +
+          '<div class="alert-item-body">' +
+          '<strong>Location:</strong> ' + (p.location || 'Unknown') + '<br>' +
+          '<strong>Reported by:</strong> ' + (p.asha_name || 'Unknown') + '<br>' +
+          '<strong>Date:</strong> ' + formatDate(p.date) + '<br>' +
+          '<strong>Parameters:</strong> pH: ' + (p.ph || 'N/A') + ', Turbidity: ' + (p.turbidity || 'N/A') + ' NTU, Temp: ' + (p.temperature || 'N/A') + '&deg;C' +
+          '</div>' +
+          '<button class="dismiss-btn" onclick="deleteItem(\'prediction\',' + p.id + ')">Dismiss Alert</button>' +
+          '</div>';
+      }).join('');
+    }
+
+  } catch(error) {
+    showNotification('Error loading dashboard data', 'error');
+  }
+}
+
+async function handleStatusChange(e) {
+  await updateComplaintStatus(e.target.getAttribute('data-id'), e.target.value);
+}
+
+async function updateComplaintStatus(id, status) {
+  try {
+    await axios.put('/api/admin/update_complaint_status/' + id, { status: status });
+    showNotification('Complaint status updated', 'success');
+    loadDashboardData();
+  } catch(error) {
+    showNotification('Error updating status', 'error');
+  }
+}
+
+async function deleteItem(type, id) {
+  if (confirm('Are you sure you want to delete this ' + type + '? This action cannot be undone.')) {
+    try {
+      await axios.delete('/api/admin/delete/' + type + '/' + id);
+      showNotification(type + ' deleted', 'success');
+      loadDashboardData();
+    } catch(error) {
+      showNotification('Error deleting item', 'error');
+    }
+  }
+}
+
+function showNotification(message, type) {
+  var wrap = document.getElementById('toastWrap');
+  var toast = document.createElement('div');
+  toast.className = 'toast-item' + (type === 'error' ? ' error' : '');
+  toast.textContent = message;
+  wrap.appendChild(toast);
+  setTimeout(function() { toast.remove(); }, 3000);
+}
+
+function refreshData() {
+  showNotification('Refreshing data...', 'success');
+  loadDashboardData();
+}
+
+function showHighRiskAlerts() {
+  document.getElementById('alertsPanel').scrollIntoView({ behavior:'smooth' });
+}
+
+loadDashboardData();
+setInterval(loadDashboardData, 30000);
+</script>
+{% endblock %}

@@ -1,0 +1,426 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+@keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:none; } }
+@keyframes spin   { to { transform:rotate(360deg); } }
+
+body {
+  background:
+    radial-gradient(circle at top left, rgba(79,70,229,0.10), transparent 28%),
+    radial-gradient(circle at top right, rgba(13,148,136,0.08), transparent 24%),
+    linear-gradient(180deg, #f8fafc 0%, #f8fafc 100%);
+}
+
+.dash-header {
+  display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap;
+  gap:14px; margin-bottom:24px; animation:fadeUp 0.4s ease both;
+}
+.dash-header h1 { font-size:19px; font-weight:700; color:#0d1f2d; margin:0; letter-spacing:0.08em; text-transform:uppercase; }
+.dash-header-actions { display:flex; gap:8px; flex-wrap:wrap; }
+
+.action-btn {
+  padding:8px 16px; font-size:13px; font-weight:700;
+  font-family:'Inter','DM Sans',system-ui,sans-serif;
+  letter-spacing:0.05em; text-transform:uppercase;
+  border:1px solid #dceaf3; border-radius:8px; cursor:pointer;
+  display:inline-flex; align-items:center; gap:6px;
+  transition:all 0.15s; text-decoration:none;
+  box-shadow:0 4px 14px rgba(13,31,45,0.06);
+}
+.action-btn.primary   { background:#4f46e5; color:#fff; border-color:#4f46e5; box-shadow:0 4px 14px rgba(79,70,229,0.39); }
+.action-btn.primary:hover { background:#4338ca; }
+.action-btn.secondary { background:#fff; color:#2a4a5e; }
+.action-btn.secondary:hover { background:#f4f8fb; }
+.action-btn.warning   { background:#4f46e5; color:#fff; border-color:#4f46e5; box-shadow:0 4px 14px rgba(79,70,229,0.39); }
+.action-btn.warning:hover { background:#4338ca; }
+.action-btn.danger    { background:#4f46e5; color:#fff; border-color:#4f46e5; box-shadow:0 4px 14px rgba(79,70,229,0.39); }
+.action-btn.danger:hover { background:#4338ca; }
+.action-btn.success   { background:#0d9488; color:#fff; border-color:#0d9488; }
+.action-btn.success:hover { background:#0b7c71; }
+
+.kpi-row { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px; }
+@media (max-width:768px) { .kpi-row { grid-template-columns:repeat(2,1fr); } }
+
+.kpi-card {
+  background:#fff; border:1px solid rgba(15,107,155,0.1); border-radius:12px;
+  padding:18px 20px;
+  box-shadow:0 1px 3px rgba(13,31,45,0.04),0 4px 12px rgba(13,31,45,0.06);
+  transition:box-shadow 0.2s,transform 0.2s; animation:fadeUp 0.5s ease both;
+}
+.kpi-card:nth-child(2) { animation-delay:0.05s; }
+.kpi-card:nth-child(3) { animation-delay:0.1s; }
+.kpi-card:nth-child(4) { animation-delay:0.15s; }
+.kpi-card:hover { box-shadow:0 4px 8px rgba(13,31,45,0.06),0 16px 40px rgba(13,31,45,0.1); transform:translateY(-2px); }
+
+.kpi-icon { width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:14px; margin-bottom:12px; box-shadow:0 4px 14px rgba(79,70,229,0.12); }
+.kpi-val  { font-size:1.8rem; font-weight:500; color:#0d1f2d; line-height:1; }
+.kpi-label { font-size:12.5px; color:#4d7a94; margin-top:4px; }
+
+.tables-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px; }
+@media (max-width:900px) { .tables-row { grid-template-columns:1fr; } }
+
+.panel {
+  background:#fff; border:1px solid rgba(15,107,155,0.1); border-radius:14px;
+  box-shadow:0 1px 3px rgba(13,31,45,0.04),0 4px 12px rgba(13,31,45,0.06);
+  overflow:hidden; margin-bottom:20px; animation:fadeUp 0.5s ease both;
+}
+.panel:nth-child(2) { animation-delay:0.06s; }
+
+.panel-header {
+  padding:14px 20px; border-bottom:1px solid #f4f8fb;
+  font-size:13.5px; font-weight:600; color:#0d1f2d;
+  display:flex; align-items:center; gap:8px;
+}
+.panel-header i { color:#8fb8cc; font-size:12px; }
+
+.scroll-table { max-height:340px; overflow-y:auto; }
+.scroll-table::-webkit-scrollbar { width:4px; }
+.scroll-table::-webkit-scrollbar-thumb { background:#dceaf3; border-radius:4px; }
+
+table { width:100%; border-collapse:collapse; font-size:12.5px; }
+thead th {
+  background:#f4f8fb; color:#4d7a94; font-size:11px; font-weight:500;
+  text-transform:uppercase; letter-spacing:0.06em;
+  padding:9px 14px; border-bottom:1px solid #e8f1f7; white-space:nowrap;
+  position:sticky; top:0; z-index:1;
+}
+tbody td { padding:10px 14px; border-bottom:1px solid #f4f8fb; color:#2a4a5e; vertical-align:middle; }
+tbody tr:last-child td { border-bottom:none; }
+tbody tr:hover td { background:#f9fbfd; }
+
+.type-badge {
+  display:inline-block; font-size:11px; font-weight:500;
+  padding:2px 9px; border-radius:20px;
+}
+.type-admin  { background:#f3e8ff; color:#6b21a8; }
+.type-asha   { background:#dcfce7; color:#166534; }
+.type-local  { background:#dbeafe; color:#1e40af; }
+
+.del-btn {
+  padding:5px 10px; font-size:11.5px; font-weight:500;
+  font-family:'DM Sans',system-ui,sans-serif;
+  background:#eef2ff; color:#4f46e5;
+  border:1px solid #c7d2fe; border-radius:6px;
+  cursor:pointer; transition:all 0.15s;
+}
+.del-btn:hover { background:#e0e7ff; }
+
+.no-data { text-align:center; color:#8fb8cc; padding:32px; font-size:13px; }
+
+.quick-actions-grid {
+  display:grid; grid-template-columns:repeat(4,1fr); gap:12px; padding:20px;
+}
+@media (max-width:768px) { .quick-actions-grid { grid-template-columns:repeat(2,1fr); } }
+
+.qa-btn {
+  padding:12px 16px; font-size:13px; font-weight:500;
+  font-family:'DM Sans',system-ui,sans-serif;
+  border:1px solid #dceaf3; border-radius:10px;
+  cursor:pointer; display:flex; align-items:center; justify-content:center;
+  gap:8px; transition:all 0.15s; background:#f4f8fb; color:#2a4a5e;
+}
+.qa-btn:hover { transform:translateY(-2px); box-shadow:0 4px 12px rgba(13,31,45,0.1); }
+.qa-btn.d  { background:#eef2ff; color:#4f46e5; border-color:#c7d2fe; }
+.qa-btn.d:hover  { background:#e0e7ff; }
+.qa-btn.i  { background:#eef2ff; color:#4f46e5; border-color:#c7d2fe; }
+.qa-btn.i:hover  { background:#e0e7ff; }
+.qa-btn.s  { background:#f0fdf4; color:#166534; border-color:#bbf7d0; }
+.qa-btn.s:hover  { background:#bbf7d0; }
+.qa-btn.w  { background:#fffbeb; color:#92400e; border-color:#fde68a; }
+.qa-btn.w:hover  { background:#fde68a; }
+
+.toast-wrap {
+  position:fixed; top:20px; right:20px; z-index:9999;
+  display:flex; flex-direction:column; gap:8px; pointer-events:none;
+}
+.toast-item {
+  background:#0d1f2d; color:#fff; padding:11px 16px;
+  border-radius:10px; font-size:13px;
+  box-shadow:0 8px 32px rgba(0,0,0,0.2);
+  display:flex; align-items:center; gap:8px;
+  animation:fadeUp 0.25s ease both; pointer-events:auto;
+  max-width:280px; border-left:3px solid #34d399; position:relative;
+}
+.toast-item.error { border-left-color:#f87171; }
+
+.active-dot {
+  display:inline-block; width:7px; height:7px;
+  background:#34d399; border-radius:50%; margin-right:2px;
+}
+</style>
+
+<div class="dash-header">
+  <div>
+    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.14em;color:#8fb8cc;margin-bottom:3px;">Surveillance Command</div>
+    <h1>Admin Control Panel</h1>
+  </div>
+  <div class="dash-header-actions">
+    <a href="/admin/dashboard" class="action-btn primary"><i class="fas fa-chart-line" style="font-size:11px;"></i> Dashboard</a>
+    <a href="/admin/control" class="action-btn warning"><i class="fas fa-cogs" style="font-size:11px;"></i> Control Panel</a>
+    <button onclick="refreshData()" class="action-btn secondary"><i class="fas fa-sync-alt" style="font-size:11px;"></i> Refresh</button>
+  </div>
+</div>
+
+<!-- KPIs -->
+<div class="kpi-row">
+  <div class="kpi-card">
+    <div class="kpi-icon" style="background:#eff8ff;color:#0f6b9b;"><i class="fas fa-users"></i></div>
+    <div class="kpi-val" id="totalLocals">0</div>
+    <div class="kpi-label">Registered citizens</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-icon" style="background:#f0fdf4;color:#166534;"><i class="fas fa-user-nurse"></i></div>
+    <div class="kpi-val" id="totalAsha">0</div>
+    <div class="kpi-label">ASHA workers</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-icon" style="background:#fffbeb;color:#d97706;"><i class="fas fa-chart-line"></i></div>
+    <div class="kpi-val" id="totalPredictions">0</div>
+    <div class="kpi-label">Total predictions</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-icon" style="background:#eef2ff;color:#4f46e5;"><i class="fas fa-file-alt"></i></div>
+    <div class="kpi-val" id="totalComplaints">0</div>
+    <div class="kpi-label">Total complaints</div>
+  </div>
+</div>
+
+<!-- USER MANAGEMENT TABLES -->
+<div class="tables-row">
+  <div class="panel">
+    <div class="panel-header">
+      <i class="fas fa-users"></i>
+      Local Citizens
+    </div>
+    <div class="scroll-table">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th><th>Name</th><th>Email</th>
+            <th>Phone</th><th>Area</th><th>Joined</th><th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="localsList">
+          <tr><td colspan="7" class="no-data">Loading...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="panel" style="animation-delay:0.06s;">
+    <div class="panel-header">
+      <i class="fas fa-user-nurse"></i>
+      ASHA Workers
+    </div>
+    <div class="scroll-table">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th><th>Name</th><th>Worker ID</th>
+            <th>Email</th><th>Area</th><th>Joined</th><th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="ashaList">
+          <tr><td colspan="7" class="no-data">Loading...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- SESSION LOGS -->
+<div class="panel">
+  <div class="panel-header">
+    <i class="fas fa-history"></i>
+    User Session Logs
+  </div>
+  <div class="scroll-table">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th><th>User Type</th><th>Name</th>
+          <th>Login Time</th><th>Logout Time</th><th>Duration</th>
+        </tr>
+      </thead>
+      <tbody id="sessionsList">
+        <tr><td colspan="6" class="no-data">Loading...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- QUICK ACTIONS -->
+<div class="panel">
+  <div class="panel-header">
+    <i class="fas fa-tools"></i>
+    Quick Actions
+  </div>
+  <div class="quick-actions-grid">
+    <button class="qa-btn d" onclick="clearAllAlerts()">
+      <i class="fas fa-bell-slash" style="font-size:13px;"></i> Clear All Alerts
+    </button>
+    <button class="qa-btn i" onclick="exportData()">
+      <i class="fas fa-download" style="font-size:13px;"></i> Export Reports
+    </button>
+    <button class="qa-btn s" onclick="refreshData()">
+      <i class="fas fa-sync-alt" style="font-size:13px;"></i> Refresh Data
+    </button>
+    <button class="qa-btn w" onclick="window.location.href='/admin/dashboard'">
+      <i class="fas fa-chart-line" style="font-size:13px;"></i> View Dashboard
+    </button>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+async function loadControlData() {
+  try {
+    const statsResponse = await axios.get('/api/admin/stats');
+    const stats = statsResponse.data;
+
+    document.getElementById('totalLocals').textContent      = stats.total_locals || 0;
+    document.getElementById('totalAsha').textContent        = stats.total_asha || 0;
+    document.getElementById('totalPredictions').textContent = stats.total_predictions || 0;
+    document.getElementById('totalComplaints').textContent  = stats.total_complaints || 0;
+
+    // Citizens
+    const localsResponse = await axios.get('/api/admin/locals');
+    const locals = localsResponse.data;
+    const localsTbody = document.getElementById('localsList');
+    localsTbody.innerHTML = locals.length === 0
+      ? '<tr><td colspan="7" class="no-data">No registered citizens</td></tr>'
+      : locals.map(function(l) {
+          return '<tr>' +
+            '<td>' + l.id + '</td>' +
+            '<td style="font-weight:500;color:#0d1f2d;">' + l.name + '</td>' +
+            '<td style="color:#4d7a94;">' + l.email + '</td>' +
+            '<td>' + l.phone + '</td>' +
+            '<td>' + (l.area || 'N/A') + '</td>' +
+            '<td>' + new Date(l.created_at).toLocaleDateString() + '</td>' +
+            '<td><button class="del-btn" onclick="deleteUser(\'local\',' + l.id + ',\'' + l.name.replace(/'/g,"") + '\')"><i class="fas fa-trash"></i></button></td>' +
+            '</tr>';
+        }).join('');
+
+    // ASHA workers
+    const ashaResponse = await axios.get('/api/admin/asha');
+    const ashaWorkers = ashaResponse.data;
+    const ashaTbody = document.getElementById('ashaList');
+    ashaTbody.innerHTML = ashaWorkers.length === 0
+      ? '<tr><td colspan="7" class="no-data">No registered ASHA workers</td></tr>'
+      : ashaWorkers.map(function(a) {
+          return '<tr>' +
+            '<td>' + a.id + '</td>' +
+            '<td style="font-weight:500;color:#0d1f2d;">' + a.name + '</td>' +
+            '<td style="color:#4d7a94;font-size:12px;">' + a.worker_id + '</td>' +
+            '<td>' + a.email + '</td>' +
+            '<td>' + (a.area || 'N/A') + '</td>' +
+            '<td>' + new Date(a.created_at).toLocaleDateString() + '</td>' +
+            '<td><button class="del-btn" onclick="deleteUser(\'asha\',' + a.id + ',\'' + a.name.replace(/'/g,"") + '\')"><i class="fas fa-trash"></i></button></td>' +
+            '</tr>';
+        }).join('');
+
+    // Sessions
+    const sessionsResponse = await axios.get('/api/admin/sessions');
+    const sessions = sessionsResponse.data;
+    const sessionsTbody = document.getElementById('sessionsList');
+    sessionsTbody.innerHTML = sessions.length === 0
+      ? '<tr><td colspan="6" class="no-data">No session records found</td></tr>'
+      : sessions.map(function(s) {
+          const loginTime  = new Date(s.login_time);
+          const logoutTime = s.logout_time ? new Date(s.logout_time) : null;
+          let duration = '<span style="color:#34d399;font-size:11.5px;"><span class="active-dot"></span>Active</span>';
+          if (logoutTime) {
+            const mins = Math.floor((logoutTime - loginTime) / 60000);
+            duration = mins + ' min';
+          }
+          var typeClass = s.user_type === 'admin' ? 'type-admin' : (s.user_type === 'asha' ? 'type-asha' : 'type-local');
+          return '<tr>' +
+            '<td>' + s.id + '</td>' +
+            '<td><span class="type-badge ' + typeClass + '">' + s.user_type + '</span></td>' +
+            '<td style="font-weight:500;color:#0d1f2d;">' + (s.user_name || 'N/A') + '</td>' +
+            '<td>' + loginTime.toLocaleString() + '</td>' +
+            '<td>' + (logoutTime ? logoutTime.toLocaleString() : 'Still active') + '</td>' +
+            '<td>' + duration + '</td>' +
+            '</tr>';
+        }).join('');
+
+  } catch(error) {
+    console.error('Error loading control data:', error);
+    showNotification('Error loading data', 'error');
+  }
+}
+
+async function deleteUser(type, id, name) {
+  if (confirm('Delete ' + name + '? This will also remove all related data and cannot be undone.')) {
+    try {
+      await axios.delete('/api/admin/delete/' + type + '/' + id);
+      showNotification(name + ' deleted', 'success');
+      loadControlData();
+    } catch(error) {
+      showNotification('Error deleting user', 'error');
+    }
+  }
+}
+
+async function clearAllAlerts() {
+  if (confirm('Clear all high-risk alerts? This will delete all high-risk predictions.')) {
+    try {
+      const response = await axios.get('/api/admin/predictions');
+      const highRisk = response.data.filter(function(p) { return p.prediction === 'High' || p.prediction === '0'; });
+      for (var i = 0; i < highRisk.length; i++) {
+        await axios.delete('/api/admin/delete/prediction/' + highRisk[i].id);
+      }
+      showNotification(highRisk.length + ' alert(s) cleared', 'success');
+      loadControlData();
+    } catch(error) {
+      showNotification('Error clearing alerts', 'error');
+    }
+  }
+}
+
+async function exportData() {
+  try {
+    const predictions = await axios.get('/api/admin/predictions');
+    const complaints  = await axios.get('/api/admin/complaints');
+    const exportPayload = {
+      export_date: new Date().toISOString(),
+      predictions: predictions.data,
+      complaints:  complaints.data,
+      summary: {
+        total_predictions: predictions.data.length,
+        total_complaints:  complaints.data.length,
+        high_risk: predictions.data.filter(function(p) { return p.prediction === 'High'; }).length
+      }
+    };
+    const dataStr = JSON.stringify(exportPayload, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+    const link = document.createElement('a');
+    link.setAttribute('href', dataUri);
+    link.setAttribute('download', 'water_disease_report_' + new Date().toISOString().slice(0,10) + '.json');
+    link.click();
+    showNotification('Report exported successfully', 'success');
+  } catch(error) {
+    showNotification('Error exporting data', 'error');
+  }
+}
+
+function refreshData() {
+  loadControlData();
+  showNotification('Data refreshed', 'success');
+}
+
+function showNotification(message, type) {
+  var wrap = document.getElementById('toastWrap');
+  var toast = document.createElement('div');
+  toast.className = 'toast-item' + (type === 'error' ? ' error' : '');
+  toast.textContent = message;
+  wrap.appendChild(toast);
+  setTimeout(function() { toast.remove(); }, 3000);
+}
+
+loadControlData();
+setInterval(loadControlData, 30000);
+</script>
+{% endblock %}

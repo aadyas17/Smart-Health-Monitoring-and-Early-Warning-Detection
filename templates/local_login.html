@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+#languageDropdown { display:none; }
+.auth-wrap { min-height:60vh; display:flex; align-items:center; justify-content:center; padding:24px 0; }
+.auth-card {
+  background:#fff; border:1px solid rgba(15,107,155,0.1); border-radius:18px;
+  box-shadow:0 1px 3px rgba(13,31,45,0.05),0 8px 32px rgba(13,31,45,0.1);
+  width:100%; max-width:440px; overflow:hidden;
+  animation: fadeUp 0.4s ease both;
+}
+.auth-header { padding:32px 32px 24px; border-bottom:1px solid #f4f8fb; }
+.auth-icon {
+  width:46px; height:46px; border-radius:13px; display:flex; align-items:center;
+  justify-content:center; font-size:18px; margin-bottom:16px;
+  background:#eff8ff; color:#0f6b9b;
+}
+.auth-header h2 { font-size:20px; font-weight:500; color:#0d1f2d; margin-bottom:4px; }
+.auth-header p  { font-size:13.5px; color:#4d7a94; margin:0; }
+.auth-body { padding:28px 32px 32px; }
+.form-group { margin-bottom:18px; }
+.form-label { display:block; font-size:13px; font-weight:500; color:#2a4a5e; margin-bottom:6px; }
+.form-control {
+  width:100%; padding:10px 14px; font-size:14px;
+  font-family:'DM Sans',system-ui,sans-serif;
+  border:1px solid #dceaf3; border-radius:8px; background:#f4f8fb;
+  color:#0d1f2d; transition:border-color 0.15s,box-shadow 0.15s,background 0.15s; box-sizing:border-box;
+}
+.form-control:focus { outline:none; border-color:#0f6b9b; box-shadow:0 0 0 3px rgba(15,107,155,0.1); background:#fff; }
+.submit-btn {
+  width:100%; padding:11px; font-size:14px; font-weight:500;
+  font-family:'DM Sans',system-ui,sans-serif;
+  background:#0f6b9b; color:#fff; border:none; border-radius:9px;
+  cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;
+  transition:all 0.15s; margin-top:6px;
+}
+.submit-btn:hover { background:#0d5c87; }
+.submit-btn:active { transform:scale(0.98); }
+.submit-btn:disabled { opacity:0.7; cursor:not-allowed; }
+.auth-link { text-align:center; margin-top:18px; font-size:13px; color:#4d7a94; }
+.auth-link a { color:#0f6b9b; text-decoration:none; font-weight:500; }
+.auth-link a:hover { text-decoration:underline; }
+.spinner { display:inline-block; width:14px; height:14px; border:2px solid rgba(255,255,255,0.4); border-top-color:#fff; border-radius:50%; animation:spin 0.6s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+@keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:none; } }
+</style>
+
+<div class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="auth-icon"><i class="fas fa-user"></i></div>
+      <h2>Citizen Login</h2>
+      <p>Sign in to report water and health issues in your area</p>
+    </div>
+    <div class="auth-body">
+      <div class="form-group">
+        <label class="form-label" for="email">Email Address</label>
+        <input type="email" class="form-control" id="email" placeholder="you@example.com" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="password">Password</label>
+        <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
+      </div>
+      <button type="button" class="submit-btn" id="loginBtn" onclick="doLogin()">Sign In</button>
+      <div class="auth-link">New here? <a href="/local/register">Create an account</a></div>
+    </div>
+  </div>
+</div>
+
+<script>
+async function doLogin() {
+  const btn = document.getElementById('loginBtn');
+  btn.innerHTML = '<span class="spinner"></span> Signing in...';
+  btn.disabled = true;
+  try {
+    const response = await axios.post('/api/local/login', {
+      email: document.getElementById('email').value,
+      password: document.getElementById('password').value
+    });
+    if (response.data.success) {
+      localStorage.setItem('local_id', response.data.user_id);
+      localStorage.setItem('local_name', response.data.name);
+      window.location.href = '/local/logged';
+    } else {
+      alert('Login failed: ' + (response.data.message || 'Invalid credentials'));
+    }
+  } catch (error) {
+    alert('Error logging in. Please try again.');
+  } finally {
+    btn.innerHTML = 'Sign In';
+    btn.disabled = false;
+  }
+}
+document.addEventListener('keydown', function(e) { if (e.key === 'Enter') doLogin(); });
+</script>
+{% endblock %}

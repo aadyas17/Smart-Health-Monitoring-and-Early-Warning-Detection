@@ -1,0 +1,410 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+@keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:none; } }
+@keyframes spin   { to { transform:rotate(360deg); } }
+
+.page-hd { margin-bottom:24px; animation:fadeUp 0.4s ease both; }
+.page-hd h1 { font-size:24px; font-weight:600; color:#0d1f2d; margin-bottom:4px; }
+.page-hd p  { font-size:14.5px; color:#4d7a94; margin:0; font-weight:500; }
+
+.form-grid {
+  display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:20px;
+}
+@media (max-width:768px) { .form-grid { grid-template-columns:1fr; } }
+
+.panel {
+  background:#fff; border:1px solid rgba(15,107,155,0.1); border-radius:14px;
+  box-shadow:0 1px 3px rgba(13,31,45,0.04),0 4px 12px rgba(13,31,45,0.06);
+  overflow:hidden; animation:fadeUp 0.5s ease both;
+}
+.panel:nth-child(2) { animation-delay:0.06s; }
+
+.panel-header {
+  padding:14px 20px; border-bottom:1px solid #f4f8fb;
+  font-size:14px; font-weight:600; color:#0d1f2d;
+  display:flex; align-items:center; gap:7px;
+}
+.panel-header i { color:#8fb8cc; font-size:13px; }
+.panel-body { padding:20px; }
+
+.form-group { margin-bottom:14px; }
+.form-label { display:block; font-size:13.5px; font-weight:600; color:#2a4a5e; margin-bottom:5px; }
+
+.form-label small {
+  font-weight:400; color:#8fb8cc; font-size:11px; margin-left:4px;
+}
+
+.form-control {
+  width:100%; padding:9px 13px; font-size:14.2px;
+  font-family:'DM Sans',system-ui,sans-serif;
+  border:1px solid #dceaf3; border-radius:8px; background:#f4f8fb;
+  color:#0d1f2d; transition:border-color 0.15s,box-shadow 0.15s,background 0.15s; box-sizing:border-box;
+}
+.form-control:focus { outline:none; border-color:#0d9488; box-shadow:0 0 0 3px rgba(13,148,136,0.1); background:#fff; }
+.form-control.is-invalid { border-color:#be3a3a; }
+
+.invalid-note { font-size:11.5px; color:#be3a3a; margin-top:4px; display:none; }
+.form-control.is-invalid + .invalid-note { display:block; }
+
+.check-group { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+.check-group.is-invalid {
+  border: 1px solid #be3a3a;
+  border-radius: 8px;
+  padding: 6px;
+}
+.check-item {
+  display:flex; align-items:center; gap:8px; padding:8px 10px;
+  border:1px solid #dceaf3; border-radius:7px; cursor:pointer; transition:all 0.15s; background:#f4f8fb;
+}
+.check-item:hover { background:#e8f1f7; border-color:#8fb8cc; }
+.check-item input[type="checkbox"] { accent-color:#0d9488; width:14px; height:14px; }
+.check-item label { font-size:13.2px; font-weight:500; color:#2a4a5e; cursor:pointer; margin:0; }
+
+.form-actions {
+  display:flex; gap:10px; margin-top:20px; align-items:center;
+}
+
+.btn-predict {
+  padding:10px 24px; font-size:15px; font-weight:600;
+  font-family:'DM Sans',system-ui,sans-serif;
+  background:#0d9488; color:#fff; border:none; border-radius:9px;
+  cursor:pointer; display:inline-flex; align-items:center; gap:7px;
+  transition:all 0.15s;
+}
+.btn-predict:hover { background:#0b7c71; }
+.btn-predict:active { transform:scale(0.98); }
+.btn-predict:disabled { opacity:0.7; cursor:not-allowed; }
+
+.btn-reset {
+  padding:10px 18px; font-size:15px; font-weight:600;
+  font-family:'DM Sans',system-ui,sans-serif;
+  background:#f4f8fb; color:#4d7a94;
+  border:1px solid #dceaf3; border-radius:9px;
+  cursor:pointer; transition:all 0.15s;
+}
+.btn-reset:hover { background:#e8f1f7; }
+
+.spinner { display:inline-block; width:13px; height:13px; border:2px solid rgba(255,255,255,0.4); border-top-color:#fff; border-radius:50%; animation:spin 0.6s linear infinite; }
+
+/* Result panel */
+.result-panel {
+  border-radius:14px; padding:24px 28px; margin-bottom:24px;
+  display:none; animation:fadeUp 0.4s ease both;
+}
+.result-panel.high   { background:#fff1f2; border:1px solid #fecdd3; }
+.result-panel.medium { background:#fffbeb; border:1px solid #fde68a; }
+.result-panel.low    { background:#f0fdf4; border:1px solid #bbf7d0; }
+
+.result-title {
+  font-size:20px; font-weight:600; margin-bottom:6px;
+}
+.result-panel.high   .result-title { color:#881337; }
+.result-panel.medium .result-title { color:#78350f; }
+.result-panel.low    .result-title { color:#14532d; }
+
+.result-desc { font-size:14.5px; margin-bottom:16px; font-weight:500; }
+.result-panel.high   .result-desc { color:#9f1239; }
+.result-panel.medium .result-desc { color:#92400e; }
+.result-panel.low    .result-desc { color:#166534; }
+
+.result-actions { font-size:14px; }
+.result-actions strong { display:block; margin-bottom:8px; font-weight:700; }
+.result-actions ul { padding-left:18px; margin:0; }
+.result-actions li { margin-bottom:4px; }
+.result-panel.high   .result-actions { color:#881337; }
+.result-panel.medium .result-actions { color:#78350f; }
+.result-panel.low    .result-actions { color:#166534; }
+
+.section-sep { font-size:11.8px; font-weight:600; text-transform:uppercase; letter-spacing:0.07em; color:#8fb8cc; margin:14px 0 10px; }
+</style>
+
+<div class="page-hd">
+  <h1>Water Quality Prediction</h1>
+  <p>Enter field parameters below to receive an AI-based disease outbreak risk assessment</p>
+</div>
+
+<div id="predictionResult" class="result-panel">
+  <div class="result-title" id="resultTitle"></div>
+  <div class="result-desc" id="resultMessage"></div>
+  <div class="result-actions" id="recommendations"></div>
+</div>
+
+<div class="form-grid">
+  <div class="panel">
+    <div class="panel-header">
+      <i class="fas fa-map-marker-alt"></i>
+      Location &amp; Environmental Parameters
+    </div>
+    <div class="panel-body">
+      <div class="form-group">
+        <label class="form-label">Location</label>
+        <input type="text" class="form-control" id="location" placeholder="Village / Ward name" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Temperature <small>20 – 45 &deg;C</small></label>
+        <input type="number" step="0.1" class="form-control" id="temperature" placeholder="e.g. 32.5" required>
+        <div class="invalid-note">Temperature must be between 20 and 45&deg;C</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Rainfall <small>mm</small></label>
+        <input type="number" step="0.1" class="form-control" id="rainfall" placeholder="e.g. 120" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">pH Level <small>6.5 – 8.5</small></label>
+        <input type="number" step="0.1" class="form-control" id="ph" placeholder="e.g. 7.2" required>
+        <div class="invalid-note">pH must be between 6.5 and 8.5</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Turbidity <small>0 – 500 NTU</small></label>
+        <input type="number" step="0.1" class="form-control" id="turbidity" placeholder="e.g. 4.5" required>
+        <div class="invalid-note">Turbidity must be between 0 and 500 NTU</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Dissolved Oxygen <small>mg/L</small></label>
+        <input type="number" step="0.1" class="form-control" id="dissolved_oxygen" placeholder="e.g. 7.8" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Nitrate <small>mg/L</small></label>
+        <input type="number" step="0.1" class="form-control" id="nitrate" placeholder="e.g. 5.2" required>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header">
+      <i class="fas fa-flask"></i>
+      Chemical, Biological &amp; Field Parameters
+    </div>
+    <div class="panel-body">
+      <div class="form-group">
+        <label class="form-label">Lead <small>mg/L</small></label>
+        <input type="number" step="0.001" class="form-control" id="lead" placeholder="e.g. 0.01" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Bacterial Count <small>0 – 1000 CFU/mL</small></label>
+        <input type="number" class="form-control" id="bacterial_count" placeholder="e.g. 45" required>
+        <div class="invalid-note">Bacterial count must be between 0 and 1000 CFU/mL</div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Clean Water Access <small>%</small></label>
+        <input type="number" step="0.1" class="form-control" id="clean_water_percentage" placeholder="e.g. 72" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Sanitation Level <small>%</small></label>
+        <input type="number" step="0.1" class="form-control" id="sanitation_level" placeholder="e.g. 60" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Healthcare Access <small>%</small></label>
+        <input type="number" step="0.1" class="form-control" id="healthcare_access" placeholder="e.g. 55" required>
+      </div>
+
+      <div class="section-sep">Symptoms observed</div>
+      <div class="check-group" id="symptom_group" style="margin-bottom:14px;">
+        <div class="check-item">
+          <input type="checkbox" id="symptom_diarrhea">
+          <label for="symptom_diarrhea">Diarrhea</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="symptom_fever">
+          <label for="symptom_fever">Fever</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="symptom_vomiting">
+          <label for="symptom_vomiting">Vomiting</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="symptom_stomach_pain">
+          <label for="symptom_stomach_pain">Stomach Pain</label>
+        </div>
+      </div>
+
+      <div class="section-sep">Water issues observed</div>
+      <div class="check-group" id="water_issue_group">
+        <div class="check-item">
+          <input type="checkbox" id="water_dirty">
+          <label for="water_dirty">Dirty Water</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="water_scarcity">
+          <label for="water_scarcity">Water Scarcity</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="water_bad_odour">
+          <label for="water_bad_odour">Bad Odour</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="water_discolouration">
+          <label for="water_discolouration">Water Discolouration</label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="form-actions">
+  <button type="button" class="btn-predict" id="predictBtn" onclick="submitPrediction()">
+    <i class="fas fa-brain" style="font-size:12px;"></i> Get AI Prediction
+  </button>
+  <button type="button" class="btn-reset" onclick="resetForm()">Reset Form</button>
+</div>
+
+<script>
+function validateInputs() {
+  var valid = true;
+
+  var locationEl = document.getElementById('location');
+  if (!locationEl.value.trim()) {
+    locationEl.classList.add('is-invalid'); valid = false;
+  } else { locationEl.classList.remove('is-invalid'); }
+
+  var requiredNumericIds = [
+    'temperature', 'rainfall', 'ph', 'turbidity', 'dissolved_oxygen',
+    'nitrate', 'lead', 'bacterial_count', 'clean_water_percentage',
+    'sanitation_level', 'healthcare_access'
+  ];
+
+  requiredNumericIds.forEach(function(id) {
+    var el = document.getElementById(id);
+    var val = parseFloat(el.value);
+    if (el.value === '' || isNaN(val)) {
+      el.classList.add('is-invalid');
+      valid = false;
+    } else if (id !== 'temperature' && id !== 'ph' && id !== 'turbidity' && id !== 'bacterial_count') {
+      el.classList.remove('is-invalid');
+    }
+  });
+
+  var temp = parseFloat(document.getElementById('temperature').value);
+  var tempEl = document.getElementById('temperature');
+  if (isNaN(temp) || temp < 20 || temp > 45) {
+    tempEl.classList.add('is-invalid'); valid = false;
+  } else { tempEl.classList.remove('is-invalid'); }
+
+  var ph = parseFloat(document.getElementById('ph').value);
+  var phEl = document.getElementById('ph');
+  if (isNaN(ph) || ph < 6.5 || ph > 8.5) {
+    phEl.classList.add('is-invalid'); valid = false;
+  } else { phEl.classList.remove('is-invalid'); }
+
+  var turb = parseFloat(document.getElementById('turbidity').value);
+  var turbEl = document.getElementById('turbidity');
+  if (isNaN(turb) || turb < 0 || turb > 500) {
+    turbEl.classList.add('is-invalid'); valid = false;
+  } else { turbEl.classList.remove('is-invalid'); }
+
+  var bact = parseFloat(document.getElementById('bacterial_count').value);
+  var bactEl = document.getElementById('bacterial_count');
+  if (isNaN(bact) || bact < 0 || bact > 1000) {
+    bactEl.classList.add('is-invalid'); valid = false;
+  } else { bactEl.classList.remove('is-invalid'); }
+
+  var symptomIds = ['symptom_diarrhea', 'symptom_fever', 'symptom_vomiting', 'symptom_stomach_pain'];
+  var hasSymptom = symptomIds.some(function(id) { return document.getElementById(id).checked; });
+  var symptomGroup = document.getElementById('symptom_group');
+  if (!hasSymptom) {
+    symptomGroup.classList.add('is-invalid');
+    valid = false;
+  } else {
+    symptomGroup.classList.remove('is-invalid');
+  }
+
+  var waterIssueIds = ['water_dirty', 'water_scarcity', 'water_bad_odour', 'water_discolouration'];
+  var hasWaterIssue = waterIssueIds.some(function(id) { return document.getElementById(id).checked; });
+  var waterIssueGroup = document.getElementById('water_issue_group');
+  if (!hasWaterIssue) {
+    waterIssueGroup.classList.add('is-invalid');
+    valid = false;
+  } else {
+    waterIssueGroup.classList.remove('is-invalid');
+  }
+
+  if (!valid && (!hasSymptom || !hasWaterIssue)) {
+    alert('Please select at least one option in Symptoms observed and Water issues observed.');
+  }
+
+  return valid;
+}
+
+async function submitPrediction() {
+  if (!validateInputs()) {
+    return;
+  }
+
+  var btn = document.getElementById('predictBtn');
+  btn.innerHTML = '<span class="spinner"></span> Analyzing data...';
+  btn.disabled = true;
+
+  var hasVomiting = document.getElementById('symptom_vomiting').checked;
+  var hasStomachPain = document.getElementById('symptom_stomach_pain').checked;
+  var hasBadOdour = document.getElementById('water_bad_odour').checked;
+  var hasDiscolouration = document.getElementById('water_discolouration').checked;
+
+  var data = {
+    asha_id: parseInt(localStorage.getItem('asha_id')),
+    location: document.getElementById('location').value,
+    temperature: parseFloat(document.getElementById('temperature').value),
+    rainfall: parseFloat(document.getElementById('rainfall').value),
+    ph: parseFloat(document.getElementById('ph').value),
+    turbidity: parseFloat(document.getElementById('turbidity').value),
+    dissolved_oxygen: parseFloat(document.getElementById('dissolved_oxygen').value),
+    nitrate: parseFloat(document.getElementById('nitrate').value),
+    lead: parseFloat(document.getElementById('lead').value),
+    bacterial_count: parseFloat(document.getElementById('bacterial_count').value),
+    clean_water_percentage: parseFloat(document.getElementById('clean_water_percentage').value),
+    sanitation_level: parseFloat(document.getElementById('sanitation_level').value),
+    healthcare_access: parseFloat(document.getElementById('healthcare_access').value),
+    symptom_diarrhea: (document.getElementById('symptom_diarrhea').checked || hasVomiting || hasStomachPain) ? 1 : 0,
+    symptom_fever: document.getElementById('symptom_fever').checked ? 1 : 0,
+    water_dirty: (document.getElementById('water_dirty').checked || hasBadOdour || hasDiscolouration) ? 1 : 0,
+    water_scarcity: document.getElementById('water_scarcity').checked ? 1 : 0
+  };
+
+  try {
+    var response = await axios.post('/api/predict', data);
+    var result = response.data.prediction;
+
+    var resultDiv = document.getElementById('predictionResult');
+    var title = document.getElementById('resultTitle');
+    var message = document.getElementById('resultMessage');
+    var recommendations = document.getElementById('recommendations');
+
+    resultDiv.className = 'result-panel ' + result.toLowerCase();
+    resultDiv.style.display = 'block';
+
+    if (result === 'High') {
+      title.textContent = 'High Risk Detected';
+      message.textContent = 'The analysis indicates a high risk of water-borne disease outbreak in this area. Immediate action is required.';
+      recommendations.innerHTML = '<strong>Immediate actions required</strong><ul><li>Alert health officials immediately</li><li>Distribute water purification tablets</li><li>Conduct emergency health camp</li><li>Issue public health advisory</li><li>Arrange for clean water supply</li></ul>';
+    } else if (result === 'Medium') {
+      title.textContent = 'Medium Risk Detected';
+      message.textContent = 'The analysis indicates a moderate risk level. Monitoring and preventive measures are recommended.';
+      recommendations.innerHTML = '<strong>Recommended actions</strong><ul><li>Increase water quality monitoring frequency</li><li>Run community awareness programs</li><li>Increase sanitation inspections</li><li>Distribute health information materials</li></ul>';
+    } else {
+      title.textContent = 'Low Risk';
+      message.textContent = 'The analysis indicates a low risk level. Continue regular monitoring protocols.';
+      recommendations.innerHTML = '<strong>Maintenance actions</strong><ul><li>Continue regular monitoring</li><li>Maintain sanitation standards</li><li>Periodic community awareness sessions</li></ul>';
+    }
+
+    resultDiv.scrollIntoView({ behavior: 'smooth' });
+  } catch (error) {
+    alert('Error making prediction. Please check your inputs and try again.');
+  } finally {
+    btn.innerHTML = '<i class="fas fa-brain" style="font-size:12px;"></i> Get AI Prediction';
+    btn.disabled = false;
+  }
+}
+
+function resetForm() {
+  document.querySelectorAll('.form-control').forEach(function(el) {
+    el.value = '';
+    el.classList.remove('is-invalid');
+  });
+  ['symptom_diarrhea','symptom_fever','symptom_vomiting','symptom_stomach_pain','water_dirty','water_scarcity','water_bad_odour','water_discolouration'].forEach(function(id) {
+    document.getElementById(id).checked = false;
+  });
+  document.getElementById('predictionResult').style.display = 'none';
+}
+</script>
+{% endblock %}

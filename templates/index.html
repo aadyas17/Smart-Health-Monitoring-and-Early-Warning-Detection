@@ -1,0 +1,1130 @@
+{% extends "base.html" %}
+
+{% block content %}
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --ink:       #0d1f2d;
+  --ink-mid:   #2a4a5e;
+  --ink-soft:  #4d7a94;
+  --ink-pale:  #8fb8cc;
+  --surf:      #f4f8fb;
+  --surf2:     #e8f1f7;
+  --surf3:     #dceaf3;
+  --blue:      #0f6b9b;
+  --blue-d:    #0a4e76;
+  --teal:      #0d9488;
+  --danger-c:  #be3a3a;
+  --warn-c:    #b45309;
+  --ok-c:      #166534;
+  --line:      rgba(15,107,155,0.1);
+  --shadow:    0 1px 3px rgba(13,31,45,0.05), 0 6px 24px rgba(13,31,45,0.07);
+  --shadow-h:  0 4px 8px rgba(13,31,45,0.06), 0 20px 56px rgba(13,31,45,0.12);
+  --font:      'DM Sans', system-ui, sans-serif;
+  --font-d:    'DM Serif Display', Georgia, serif;
+  --r:         12px;
+  --r-lg:      18px;
+}
+
+* { box-sizing: border-box; }
+body { font-family: var(--font); background: var(--surf); color: var(--ink); }
+
+@keyframes fadeUp   { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:none; } }
+@keyframes waveMove { 0% { transform:translateX(0); } 100% { transform:translateX(-50%); } }
+@keyframes pulseRing { 0%,100% { transform:scale(1); opacity:.5; } 50% { transform:scale(1.5); opacity:0; } }
+@keyframes floatY   { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-10px); } }
+@keyframes spin     { to { transform:rotate(360deg); } }
+
+/* HERO */
+.hero {
+  background: linear-gradient(140deg, #071e30 0%, #0c3d5c 40%, #0f6b9b 80%, #1a8dbf 100%);
+  border-radius: var(--r-lg);
+  padding: 72px 56px 88px;
+  margin-bottom: 40px;
+  position: relative;
+  overflow: hidden;
+  animation: fadeUp 0.8s ease both;
+}
+
+.hero-wave {
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 210%; height: 60px;
+  pointer-events: none;
+}
+.hero-wave.w1 { animation: waveMove 9s linear infinite; opacity:.18; }
+.hero-wave.w2 { animation: waveMove 13s linear infinite reverse; opacity:.11; bottom:10px; }
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.16);
+  border-radius: 20px;
+  padding: 5px 16px 5px 10px;
+  font-size: 12px;
+  color: rgba(200,238,249,0.9);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  margin-bottom: 22px;
+  position: relative;
+  z-index: 2;
+  animation: fadeUp 0.8s 0.05s ease both;
+}
+
+.hero-badge-dot {
+  width: 7px; height: 7px;
+  background: #34d399;
+  border-radius: 50%;
+  position: relative;
+}
+.hero-badge-dot::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border: 1px solid #34d399;
+  border-radius: 50%;
+  animation: pulseRing 2s ease-in-out infinite;
+}
+
+.hero h1 {
+  font-family: var(--font-d);
+  font-size: clamp(1.7rem, 4vw, 3rem);
+  font-weight: 400;
+  color: #fff;
+  line-height: 1.15;
+  margin-bottom: 16px;
+  text-align: center;
+  white-space: nowrap;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+  z-index: 2;
+  animation: fadeUp 0.8s 0.1s ease both;
+}
+
+.hero p.lead {
+  font-size: clamp(0.95rem, 1.8vw, 1.05rem);
+  color: rgba(200,238,249,0.8);
+  font-weight: 300;
+  letter-spacing: 0.01em;
+  margin-bottom: 32px;
+  text-align: center;
+  white-space: nowrap;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+  z-index: 2;
+  animation: fadeUp 0.8s 0.2s ease both;
+}
+
+.hero-pills {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 10px;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+  animation: fadeUp 0.8s 0.3s ease both;
+}
+
+.hero-pill {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 24px;
+  padding: 7px 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hero-pill .v { color: #fff; font-size: 1rem; font-weight: 500; }
+.hero-pill .l { color: rgba(200,238,249,0.7); font-size: 12px; }
+
+/* DISEASE BELT */
+.disease-belt {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 36px;
+  animation: fadeUp 0.6s 0.15s ease both;
+}
+
+.dpill {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--ink-mid);
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: var(--shadow);
+}
+
+.dpill:hover {
+  background: var(--blue);
+  color: #fff;
+  border-color: transparent;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(15,107,155,0.2);
+}
+
+.dpill-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.dpill:hover .dpill-dot { background: rgba(255,255,255,0.7) !important; }
+
+/* WQI STRIP */
+.wqi-strip {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  padding: 22px 28px;
+  box-shadow: var(--shadow);
+  margin-bottom: 36px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  align-items: center;
+  animation: fadeUp 0.6s ease both;
+}
+
+.wqi-label-main {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+  margin-bottom: 4px;
+}
+
+.wqi-val-main {
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: var(--blue);
+}
+
+.wqi-status {
+  font-size: 11.5px;
+  color: var(--ok-c);
+  background: #dcfce7;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-left: 6px;
+  font-weight: 500;
+}
+
+.wqi-item { flex: 1; min-width: 110px; }
+.wqi-item-label { font-size: 11px; color: var(--ink-soft); margin-top: 4px; }
+.wqi-item-val { font-size: 14px; font-weight: 500; color: var(--ink); }
+
+.wqi-bar-track {
+  height: 5px;
+  background: var(--surf3);
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 5px 0 3px;
+}
+
+.wqi-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 1.4s ease;
+}
+
+/* PORTAL CARDS */
+.portal-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+@media (max-width: 768px) { .portal-grid { grid-template-columns: 1fr; } }
+
+.portal-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: box-shadow 0.25s, transform 0.25s;
+  animation: fadeUp 0.7s ease both;
+  display: flex;
+  flex-direction: column;
+}
+
+.portal-card:nth-child(2) { animation-delay: 0.08s; }
+.portal-card:nth-child(3) { animation-delay: 0.16s; }
+
+.portal-card:hover {
+  box-shadow: var(--shadow-h);
+  transform: translateY(-4px);
+}
+
+.portal-strip {
+  height: 4px;
+  width: 100%;
+}
+
+.portal-body {
+  padding: 28px 24px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.portal-icon-wrap {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  margin-bottom: 18px;
+  animation: floatY 4s ease-in-out infinite;
+}
+
+.portal-card:nth-child(2) .portal-icon-wrap { animation-delay: 1s; }
+.portal-card:nth-child(3) .portal-icon-wrap { animation-delay: 2s; }
+
+.portal-title { font-weight: 500; font-size: 16px; margin-bottom: 8px; color: var(--ink); }
+.portal-desc  { font-size: 13.5px; color: var(--ink-soft); line-height: 1.6; margin-bottom: 22px; flex: 1; }
+
+.portal-btn {
+  display: inline-block;
+  padding: 9px 22px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 500;
+  text-decoration: none;
+  text-align: center;
+  transition: all 0.15s;
+}
+
+/* FEATURES GRID */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+@media (max-width: 768px) { .features-grid { grid-template-columns: 1fr; } }
+
+.feat-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  animation: fadeUp 0.6s ease both;
+}
+
+.feat-card:nth-child(2) { animation-delay: 0.1s; }
+
+.feat-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--surf2);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.feat-header-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.feat-body { padding: 20px; }
+
+.feat-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 14px;
+  border-radius: 8px;
+  margin-bottom: 6px;
+  border-left: 3px solid transparent;
+  transition: all 0.2s;
+  font-size: 13.5px;
+  color: var(--ink-mid);
+}
+
+.feat-item:hover {
+  background: var(--surf);
+  border-left-color: var(--blue);
+  transform: translateX(4px);
+  color: var(--ink);
+}
+
+.feat-item i { color: var(--ink-pale); font-size: 14px; width: 16px; }
+.feat-item i {
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 13px;
+  background: rgba(79,70,229,0.08);
+  color: #4f46e5;
+}
+.feat-item:hover i { color: var(--blue); }
+
+/* HOW IT WORKS */
+.steps-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 40px;
+}
+
+@media (max-width: 768px) { .steps-row { grid-template-columns: repeat(2, 1fr); } }
+
+.step-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  padding: 28px 20px;
+  text-align: center;
+  box-shadow: var(--shadow);
+  transition: all 0.25s;
+  position: relative;
+  overflow: hidden;
+  animation: fadeUp 0.7s ease both;
+}
+
+.step-card:nth-child(2) { animation-delay: 0.08s; }
+.step-card:nth-child(3) { animation-delay: 0.16s; }
+.step-card:nth-child(4) { animation-delay: 0.24s; }
+
+.step-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--blue), var(--teal));
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.step-card:hover::after { transform: scaleX(1); }
+
+.step-card:hover {
+  box-shadow: var(--shadow-h);
+  transform: translateY(-6px);
+}
+
+.step-num {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--blue), var(--teal));
+  color: #fff;
+  font-weight: 500;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+
+.step-icon { font-size: 24px; color: var(--ink-pale); margin-bottom: 10px; }
+.step-title { font-weight: 500; font-size: 14px; color: var(--ink); margin-bottom: 8px; }
+.step-desc  { font-size: 12.5px; color: var(--ink-soft); line-height: 1.55; }
+
+/* HYGIENE */
+.hygiene-wrap {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  margin-bottom: 40px;
+  animation: fadeUp 0.6s ease both;
+}
+
+.hygiene-header {
+  padding: 16px 22px;
+  border-bottom: 1px solid var(--surf2);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hygiene-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+}
+
+@media (max-width: 768px) { .hygiene-grid { grid-template-columns: 1fr; } }
+
+.hygiene-item {
+  padding: 22px 22px;
+  border-right: 1px solid var(--surf2);
+  border-bottom: 1px solid var(--surf2);
+  transition: background 0.2s;
+}
+
+.hygiene-item:nth-child(3n) { border-right: none; }
+.hygiene-item:nth-last-child(-n+3) { border-bottom: none; }
+.hygiene-item:hover { background: var(--surf); }
+
+.hygiene-item-icon {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  background: var(--surf2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  color: var(--blue);
+  margin-bottom: 12px;
+}
+
+.hygiene-item h6 { font-size: 13.5px; font-weight: 500; color: var(--ink); margin-bottom: 6px; }
+.hygiene-item p  { font-size: 12.5px; color: var(--ink-soft); line-height: 1.6; }
+
+/* ACCORDION / FAQ */
+.faq-wrap {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  margin-bottom: 40px;
+}
+
+.faq-header {
+  padding: 16px 22px;
+  border-bottom: 1px solid var(--surf2);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.faq-item {
+  border-bottom: 1px solid var(--surf2);
+}
+.faq-item:last-child { border-bottom: none; }
+
+.faq-btn {
+  width: 100%;
+  padding: 16px 22px;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  transition: background 0.15s;
+}
+
+.faq-btn:hover { background: var(--surf); }
+.faq-btn i.fa-chevron-down { font-size: 11px; color: var(--ink-soft); transition: transform 0.2s; flex-shrink: 0; }
+.faq-btn[aria-expanded="true"] i.fa-chevron-down { transform: rotate(180deg); }
+
+.faq-body {
+  padding: 0 22px 18px;
+  font-size: 13.5px;
+  color: var(--ink-mid);
+  line-height: 1.65;
+}
+
+/* RISK BOXES */
+.risk-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+}
+
+@media (max-width: 600px) { .risk-grid { grid-template-columns: 1fr; } }
+
+.risk-box {
+  border-radius: var(--r);
+  padding: 18px;
+  text-align: center;
+}
+
+.risk-box.low    { background: #f0fdf4; border: 1px solid #bbf7d0; }
+.risk-box.medium { background: #fffbeb; border: 1px solid #fde68a; }
+.risk-box.high   { background: #fff1f2; border: 1px solid #fecdd3; }
+
+.risk-box .risk-label { font-size: 14px; font-weight: 500; margin: 10px 0 6px; }
+.risk-box.low .risk-label    { color: #166534; }
+.risk-box.medium .risk-label { color: #92400e; }
+.risk-box.high .risk-label   { color: #881337; }
+
+.risk-box .risk-desc { font-size: 12px; color: var(--ink-soft); line-height: 1.5; }
+
+.risk-icon { font-size: 26px; }
+.risk-box.low .risk-icon    { color: #22c55e; }
+.risk-box.medium .risk-icon { color: #f59e0b; }
+.risk-box.high .risk-icon   { color: #ef4444; }
+
+/* STATS SECTION */
+.stats-strip {
+  background: var(--blue-d);
+  border-radius: var(--r-lg);
+  padding: 36px;
+  margin-bottom: 40px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  text-align: center;
+  animation: fadeUp 0.6s ease both;
+}
+
+@media (max-width: 768px) { .stats-strip { grid-template-columns: repeat(2, 1fr); } }
+
+.stat-item .sv { font-size: 2rem; font-weight: 500; color: #fff; line-height: 1; }
+.stat-item .sl { font-size: 12px; color: rgba(200,238,249,0.7); margin-top: 6px; }
+
+/* SECTION TITLE */
+.sec-title {
+  font-family: var(--font-d);
+  font-size: 1.6rem;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+
+.sec-sub {
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  margin-bottom: 24px;
+}
+
+.sec-eyebrow {
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--blue);
+  margin-bottom: 6px;
+}
+
+/* SLIDESHOW */
+.slideshow-wrap {
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-h);
+  margin-bottom: 40px;
+}
+
+.carousel-item { height: 380px; }
+.carousel-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.55) saturate(1.1);
+}
+
+.carousel-caption {
+  background: rgba(13,31,45,0.7);
+  border-radius: var(--r);
+  padding: 18px 24px;
+  bottom: 24px;
+  left: 24px;
+  right: 24px;
+  text-align: left;
+}
+
+.carousel-caption h3 {
+  font-family: var(--font-d);
+  font-size: 1.2rem;
+  color: #fff;
+  margin-bottom: 4px;
+  font-weight: 400;
+}
+
+.carousel-caption p { font-size: 13px; color: rgba(200,238,249,0.85); margin: 0; }
+
+/* LANG BOXES */
+.lang-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.lang-box {
+  background: var(--surf);
+  border: 1px solid var(--surf3);
+  border-radius: var(--r);
+  padding: 14px;
+  text-align: center;
+  font-size: 13.5px;
+  color: var(--ink-mid);
+  font-weight: 500;
+}
+
+.lang-box i { display: block; font-size: 20px; color: var(--blue); margin-bottom: 6px; }
+
+@media (max-width: 768px) {
+  .hero { padding: 40px 24px 64px; }
+  .steps-row { grid-template-columns: repeat(2, 1fr); }
+  .hygiene-grid { grid-template-columns: 1fr; }
+  .stats-strip { grid-template-columns: repeat(2, 1fr); padding: 24px; }
+}
+</style>
+
+<!-- HERO -->
+<div class="hero">
+  <svg class="hero-wave w1" viewBox="0 0 1200 60" preserveAspectRatio="none">
+    <path d="M0 30 Q300 5 600 30 Q900 55 1200 30 L1200 60 L0 60Z" fill="rgba(127,212,239,0.8)"/>
+  </svg>
+  <svg class="hero-wave w2" viewBox="0 0 1200 60" preserveAspectRatio="none">
+    <path d="M0 35 Q300 60 600 35 Q900 10 1200 35 L1200 60 L0 60Z" fill="rgba(255,255,255,0.6)"/>
+  </svg>
+
+  <h1 data-en="Protecting Your Water, Protecting Your Health"
+      data-hi="आपका पानी, आपका स्वास्थ्य - सुरक्षित रखें"
+      data-kn="ನಿಮ್ಮ ನೀರು, ನಿಮ್ಮ ಆರೋಗ್ಯ - ರಕ್ಷಿಸಿ">
+    Protecting Your Water, Protecting Your Health
+  </h1>
+
+  <p class="lead"
+     data-en="AI-Based Water-Borne Disease Surveillance and Prediction System"
+     data-hi="एआई-आधारित जलजनित रोग निगरानी और भविष्यवाणी प्रणाली।"
+     data-kn="ಕೃತಕ ಬುದ್ಧಿಮತ್ತೆ ಆಧಾರಿತ ಜಲಜನ್ಯ ರೋಗ ನಿಗಾ ಮತ್ತು ಮುನ್ಸೂಚನೆ ವ್ಯವಸ್ಥೆ.">
+    AI-Based Water-Borne Disease Surveillance and Prediction System 
+  </p>
+
+  <div class="hero-pills">
+    <div class="hero-pill"><span class="v">Multi-Source Data Integration</span></div>
+    <div class="hero-pill"><span class="v">90%+ Detection Accuracy</span></div>
+    <div class="hero-pill"><span class="v">Real-Time Digital Surveillance</span></div>
+    <div class="hero-pill"><span class="v">Early Warning Alert System</span></div>
+  </div>
+</div>
+
+<!-- DISEASE BELT -->
+<div class="disease-belt">
+<div class="dpill">
+  <div class="dpill-dot" style="background:#e05252;"></div>
+  <span data-en="Community Reporting" data-hi="सामुदायिक रिपोर्टिंग" data-kn="ಸಮುದಾಯ ವರದಿ">Community Reporting</span>
+</div>
+
+<div class="dpill">
+  <div class="dpill-dot" style="background:#f0a500;"></div>
+  <span data-en="ASHA Field Validation" data-hi="आशा फील्ड सत्यापन" data-kn="ಆಶಾ ಕ್ಷೇತ್ರ ಮೌಲ್ಯೀಕರಣ">ASHA Field Validation</span>
+</div>
+
+<div class="dpill">
+  <div class="dpill-dot" style="background:#1479b0;"></div>
+  <span data-en="ML Based Prediction" data-hi="एमएल आधारित भविष्यवाणी" data-kn="ML ಆಧಾರಿತ ಮುನ್ಸೂಚನೆ">ML Based Prediction</span>
+</div>
+
+<div class="dpill">
+  <div class="dpill-dot" style="background:#0d9488;"></div>
+  <span data-en="Real-time Alerting" data-hi="रियल-टाइम अलर्टिंग" data-kn="ನೈಜ-ಸಮಯದ ಎಚ್ಚರಿಕೆ">Real-time Alerting</span>
+</div>
+
+<div class="dpill">
+  <div class="dpill-dot" style="background:#9b59b6;"></div>
+  <span data-en="Multilingual Support" data-hi="बहुभाषी समर्थन" data-kn="ಬಹುವಾಷಾ ಬೆಂಬಲ">Multilingual Support</span>
+</div>
+</div>
+
+<!-- WQI STRIP -->
+<!-- 
+<div class="wqi-strip">
+  <div style="min-width:140px;">
+    <div class="wqi-label-main">System Prediction Insights</div>
+    <div class="wqi-val-main">Optimized <span class="wqi-status">Stable</span></div>
+  </div>
+  <div class="wqi-item">
+    <div class="wqi-item-val">90%</div>
+    <div class="wqi-bar-track"><div class="wqi-bar-fill" style="width:90%;background:linear-gradient(90deg,#1479b0,#0d9488);"></div></div>
+    <div class="wqi-item-label">Model Accuracy</div>
+  </div>
+  <div class="wqi-item">
+    <div class="wqi-item-val">0.90</div>
+    <div class="wqi-bar-track"><div class="wqi-bar-fill" style="width:90%;background:linear-gradient(90deg,#22c07a,#7fd4ef);"></div></div>
+    <div class="wqi-item-label">F1 Score</div>
+  </div>
+  <div class="wqi-item">
+    <div class="wqi-item-val">90%</div>
+    <div class="wqi-bar-track"><div class="wqi-bar-fill" style="width:90%;background:#22c55e;"></div></div>
+    <div class="wqi-item-label">Precision</div>
+  </div>
+  <div class="wqi-item">
+    <div class="wqi-item-val">90%</div>
+    <div class="wqi-bar-track"><div class="wqi-bar-fill" style="width:90%;background:linear-gradient(90deg,var(--blue),#8fb8cc);"></div></div>
+    <div class="wqi-item-label">Recall</div>
+  </div>
+</div>
+-->
+
+<!-- SLIDESHOW -->
+<div class="slideshow-wrap mb-5">
+  <div id="slideshow" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+      
+      <div class="carousel-item active">
+        <img src="https://c8.alamy.com/comp/2RARAA2/portrait-of-happy-indian-farmer-man-in-rural-india-concept-white-background-cheerful-farmer-looking-into-the-mobile-phone-screen-using-technology-2RARAA2.jpg" class="d-block w-100" alt="Citizen Reporting">
+        <div class="carousel-caption">
+          <h3 data-en="Citizen Symptom Reporting" data-hi="नागरिक लक्षण रिपोर्टिंग" data-kn="ನಾಗರಿಕ ರೋಗಲಕ್ಷಣ ವರದಿ">Citizen Symptom Reporting</h3>
+          <p data-en="Empowering citizens to report symptoms and water issues instantly" data-hi="नागरिकों को लक्षणों और पानी की समस्याओं की तुरंत रिपोर्ट करने के लिए सशक्त बनाना" data-kn="ರೋಗಲಕ್ಷಣಗಳು ಮತ್ತು ನೀರಿನ ಸಮಸ್ಯೆಗಳನ್ನು ತಕ್ಷಣವೇ ವರದಿ ಮಾಡಲು ನಾಗರಿಕರನ್ನು ಸಬಲೀಕರಣಗೊಳಿಸುವುದು">Empowering citizens to report symptoms and water issues instantly</p>
+        </div>
+      </div>
+
+      <div class="carousel-item">
+        <img src="https://i.ytimg.com/vi/Kfv_6t3fL9c/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLBZcRJfiImKAKVbW70qPfRR-Ae3Gg" class="d-block w-100" alt="Field Verification">
+        <div class="carousel-caption">
+          <h3 data-en="Field Verification" data-hi="क्षेत्र सत्यापन" data-kn="ಕ್ಷೇತ್ರ ಮೌಲ್ಯೀಕರಣ">Field Verification</h3>
+          <p data-en="ASHA workers verifying field data to ensure high-quality reliability" data-hi="उच्च गुणवत्ता वाली विश्वसनीयता सुनिश्चित करने के लिए आशा कार्यकर्ता फील्ड डेटा का सत्यापन कर रही हैं" data-kn="ಉತ್ತಮ ಗುಣಮಟ್ಟದ ವಿಶ್ವಾಸಾರ್ಹತೆಯನ್ನು ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಲು ಆಶಾ ಕಾರ್ಯಕರ್ತರು ಕ್ಷೇತ್ರ ದತ್ತಾಂಶವನ್ನು ಪರಿಶೀಲಿಸುತ್ತಿದ್ದಾರೆ">ASHA workers verifying field data to ensure high-quality reliability</p>
+        </div>
+      </div>
+
+      <div class="carousel-item">
+        <img src="https://static.pib.gov.in/WriteReadData/userfiles/image/image004J9EJ.jpg" class="d-block w-100" alt="Early Warning System">
+        <div class="carousel-caption">
+          <h3 data-en="Early Warning & Rapid Response" data-hi="त्वरित चेतावनी और तीव्र प्रतिक्रिया" data-kn="ಶೀಘ್ರ ಎಚ್ಚರಿಕೆ ಮತ್ತು ಕ್ಷಿಪ್ರ ಪ್ರತಿಕ್ರಿಯೆ">Early Warning & Rapid Response</h3>
+          <p data-en="Automated alerts enabling proactive outbreak prevention" data-hi="स्वचालित अलर्ट जो बीमारियों के प्रकोप को सक्रिय रूप से रोकने में सक्षम हैं" data-kn="ರೋಗ ಹರಡುವುದನ್ನು ತಡೆಗಟ್ಟಲು ಸ್ವಯಂಚಾಲಿತ ಎಚ್ಚರಿಕೆಗಳು">Automated alerts enabling proactive outbreak prevention</p>
+        </div>
+      </div>
+
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#slideshow" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon"></span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#slideshow" data-bs-slide="next">
+      <span class="carousel-control-next-icon"></span>
+    </button>
+  </div>
+</div>
+
+<!-- ACCESS PORTALS -->
+<div class="sec-eyebrow" data-en="Access Portals" data-hi="पोर्टल" data-kn="ಪೋರ್ಟಲ್ಗಳು">Access Portals</div>
+<div class="sec-title" data-en="Three portals, one system" data-hi="तीन पोर्टल, एक प्रणाली" data-kn="ಮೂರು ಪೋರ್ಟಲ್, ಒಂದು ವ್ಯವಸ್ಥೆ">Three portals, one system</div>
+<div class="sec-sub" data-en="Designed for citizens, field workers, and health officials." data-hi="नागरिकों, कार्यकर्ताओं और अधिकारियों के लिए।" data-kn="ನಾಗರಿಕರು, ಕ್ಷೇತ್ರ ಕಾರ್ಯಕರ್ತರು ಮತ್ತು ಅಧಿಕಾರಿಗಳಿಗಾಗಿ.">Designed for citizens, field workers, and health officials.</div>
+
+<div class="portal-grid mb-5">
+  <div class="portal-card">
+    <div class="portal-strip" style="background:linear-gradient(90deg,#0f6b9b,#1a8dbf);"></div>
+    <div class="portal-body">
+      <div class="portal-icon-wrap" style="background:#eff8ff; color:#0f6b9b;"><i class="fas fa-users"></i></div>
+      <div class="portal-title" data-en="Local Citizen Portal" data-hi="नागरिक पोर्टल" data-kn="ನಾಗರಿಕ ಪೋರ್ಟಲ್">Local Citizen Portal</div>
+      <div class="portal-desc" data-en="Report water quality issues and health complaints. No technical expertise needed - help us keep your community safe." data-hi="जल गुणवत्ता और स्वास्थ्य शिकायतें दर्ज करें।" data-kn="ನೀರಿನ ಗುಣಮಟ್ಟ ಸಮಸ್ಯೆಗಳು ಮತ್ತು ಆರೋಗ್ಯ ದೂರುಗಳನ್ನು ವರದಿ ಮಾಡಿ.">Report water quality issues and health complaints. No technical expertise needed — help us keep your community safe.</div>
+      <a href="/local/login" class="portal-btn" style="background:#0f6b9b;color:#fff;" data-en="Access Portal" data-hi="पोर्टल तक पहुंचें" data-kn="ಪೋರ್ಟಲ್ ಪ್ರವೇಶಿಸಿ">Access Portal</a>
+    </div>
+  </div>
+  <div class="portal-card">
+    <div class="portal-strip" style="background:linear-gradient(90deg,#0d9488,#34d399);"></div>
+    <div class="portal-body">
+      <div class="portal-icon-wrap" style="background:#f0fdf4; color:#0d9488;"><i class="fas fa-user-nurse"></i></div>
+      <div class="portal-title" data-en="ASHA Worker Portal" data-hi="आशा कार्यकर्ता पोर्टल" data-kn="ಆಶಾ ಕಾರ್ಯಕರ್ತ ಪೋರ್ಟಲ್">ASHA Worker Portal</div>
+      <div class="portal-desc" data-en="Submit field reports, water quality data, and receive AI-powered outbreak predictions for your assigned area." data-hi="क्षेत्र रिपोर्ट और जल गुणवत्ता डेटा जमा करें।" data-kn="ಕ್ಷೇತ್ರ ವರದಿಗಳು ಮತ್ತು ನೀರಿನ ಗುಣಮಟ್ಟದ ಡೇಟಾ ಸಲ್ಲಿಸಿ.">Submit field reports, water quality data, and receive AI-powered outbreak predictions for your assigned area.</div>
+      <a href="/asha/login" class="portal-btn" style="background:#0d9488;color:#fff;" data-en="Access Portal" data-hi="पोर्टल तक पहुंचें" data-kn="ಪೋರ್ಟಲ್ ಪ್ರವೇಶಿಸಿ">Access Portal</a>
+    </div>
+  </div>
+  <div class="portal-card">
+    <div class="portal-strip" style="background:linear-gradient(90deg,#4f46e5,#f87171);"></div>
+    <div class="portal-body">
+      <div class="portal-icon-wrap" style="background:#fff1f2; color:#4f46e5;"><i class="fas fa-chart-line"></i></div>
+      <div class="portal-title" data-en="Health Official Dashboard" data-hi="स्वास्थ्य अधिकारी डैशबोर्ड" data-kn="ಆರೋಗ್ಯ ಅಧಿಕಾರಿ ಡ್ಯಾಶ್ಬೋರ್ಡ್">Health Official Dashboard</div>
+      <div class="portal-desc" data-en="Monitor outbreak trends, view analytics, manage system data, and trigger alerts for high-risk areas." data-hi="प्रकोप प्रवृत्तियों की निगरानी करें और रोग निगरानी डेटा प्रबंधित करें।" data-kn="ಸ್ಫೋಟ ಪ್ರವೃತ್ತಿಗಳನ್ನು ಮೇಲ್ವಿಚಾರಣೆ ಮಾಡಿ.">Monitor outbreak trends, view analytics, manage system data, and trigger alerts for high-risk areas.</div>
+      <a href="/admin/login" class="portal-btn" style="background:#4f46e5;color:#fff;" data-en="Access Dashboard" data-hi="डैशबोर्ड तक पहुंचें" data-kn="ಡ್ಯಾಶ್ಬೋರ್ಡ್ ಪ್ರವೇಶಿಸಿ">Access Dashboard</a>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURES & CHART -->
+<div class="features-grid">
+  <div class="feat-card">
+    <div class="feat-header">
+      <div class="feat-header-dot" style="background:#0f6b9b;"></div>
+      <span data-en="Key Features" data-hi="मुख्य विशेषताएं" data-kn="ಪ್ರಮುಖ ವೈಶಿಷ್ಟ್ಯಗಳು">Key Features</span>
+    </div>
+    <div class="feat-body">
+      <div class="feat-item"><i class="fas fa-droplet"></i><span data-en="Real-time water quality monitoring" data-hi="वास्तविक समय जल गुणवत्ता निगरानी" data-kn="ನೈಜ-ಸಮಯದ ನೀರಿನ ಗುಣಮಟ್ಟದ ಮೇಲ್ವಿಚಾರಣೆ">Real-time water quality monitoring</span></div>
+      <div class="feat-item"><i class="fas fa-brain"></i><span data-en="AI-powered disease outbreak prediction" data-hi="एआई-संचालित रोग भविष्यवाणी" data-kn="AI-ಚಾಲಿತ ರೋಗ ಮುನ್ಸೂಚನೆ">AI-powered disease outbreak prediction</span></div>
+      <div class="feat-item"><i class="fas fa-language"></i><span data-en="Multi-lingual support - English, Hindi, Kannada" data-hi="बहुभाषी समर्थन — अंग्रेजी, हिंदी, कन्नड़" data-kn="ಬಹುಭಾಷಾ ಬೆಂಬಲ — ಇಂಗ್ಲಿಷ್, ಹಿಂದಿ, ಕನ್ನಡ">Multi-lingual support — English, Hindi, Kannada</span></div>
+      <div class="feat-item"><i class="fas fa-globe"></i><span data-en="Interactive maps and geospatial risk visualization" data-hi="इंटरैक्टिव मानचित्र और जोखिम विज़ुअलाइज़ेशन" data-kn="ಸಂವಾದಾತ್ಮಕ ನಕ್ಷೆಗಳು ಮತ್ತು ಅಪಾಯ ದೃಶ್ಯೀಕರಣ">Interactive maps and geospatial risk visualization</span></div>
+      <div class="feat-item"><i class="fas fa-bell"></i><span data-en="Automated alert system for high-risk zones" data-hi="उच्च जोखिम क्षेत्रों के लिए स्वचालित अलर्ट" data-kn="ಹೆಚ್ಚಿನ ಅಪಾಯದ ಪ್ರದೇಶಗಳಿಗೆ ಸ್ವಯಂಚಾಲಿತ ಎಚ್ಚರಿಕೆ">Automated alert system for high-risk zones</span></div>
+      <div class="feat-item"><i class="fas fa-mobile-screen-button"></i><span data-en="Mobile-accessible for rural health workers" data-hi="ग्रामीण स्वास्थ्य कर्मियों के लिए मोबाइल एक्सेस" data-kn="ಗ್ರಾಮೀಣ ಆರೋಗ್ಯ ಕಾರ್ಯಕರ್ತರಿಗೆ ಮೊಬೈಲ್ ಪ್ರವೇಶ">Mobile-accessible for rural health workers</span></div>
+    </div>
+  </div>
+
+  <div class="feat-card">
+    <div class="feat-header">
+      <div class="feat-header-dot" style="background:#0d9488;"></div>
+      <span data-en="System Impact" data-hi="सिस्टम प्रभाव" data-kn="ಸಿಸ್ಟಮ್ ಪ್ರಭಾವ">System Impact</span>
+    </div>
+    <div class="feat-body">
+      <canvas id="statsChart" height="220"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<div class="sec-eyebrow" data-en="Process" data-hi="प्रक्रिया" data-kn="ಪ್ರಕ್ರಿಯೆ">Process</div>
+<div class="sec-title" data-en="How the system works" data-hi="प्रणाली कैसे काम करती है" data-kn="ವ್ಯವಸ್ಥೆ ಹೇಗೆ ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತದೆ">How the system works</div>
+<div class="sec-sub" data-en="A four-step pipeline from data collection to outbreak prevention." data-hi="डेटा संग्रह से प्रकोप रोकथाम तक चार-चरण।" data-kn="ಡೇಟಾ ಸಂಗ್ರಹದಿಂದ ಸ್ಫೋಟ ತಡೆಗಟ್ಟುವಿಕೆಯವರೆಗೆ ನಾಲ್ಕು ಹಂತ.">A four-step pipeline from data collection to outbreak prevention.</div>
+
+<div class="steps-row">
+  <div class="step-card">
+    <div class="step-num">1</div>
+    <div class="step-icon"><i class="fas fa-database"></i></div>
+    <div class="step-title" data-en="Data Collection" data-hi="डेटा संग्रह" data-kn="ಡೇಟಾ ಸಂಗ್ರಹ">Data Collection</div>
+    <div class="step-desc" data-en="Citizens and ASHA workers submit water quality readings and symptom reports." data-hi="नागरिक और ASHA कर्मी जल गुणवत्ता और लक्षण डेटा जमा करते हैं।" data-kn="ನಾಗರಿಕರು ಮತ್ತು ASHA ಕಾರ್ಯಕರ್ತರು ನೀರಿನ ಗುಣಮಟ್ಟ ಮತ್ತು ರೋಗಲಕ್ಷಣ ಡೇಟಾ ಸಲ್ಲಿಸುತ್ತಾರೆ.">Citizens and ASHA workers submit water quality readings and symptom reports.</div>
+  </div>
+  <div class="step-card">
+    <div class="step-num">2</div>
+    <div class="step-icon"><i class="fas fa-cogs"></i></div>
+    <div class="step-title" data-en="Preprocessing" data-hi="पूर्व-प्रसंस्करण" data-kn="ಪೂರ್ವ-ಸಂಸ್ಕರಣೆ">Preprocessing</div>
+    <div class="step-desc" data-en="Data is cleaned, normalized, and validated to remove noise before analysis." data-hi="विश्लेषण से पहले डेटा साफ, सामान्यीकृत और मान्य किया जाता है।" data-kn="ವಿಶ್ಲೇಷಣೆಗೆ ಮೊದಲು ಡೇಟಾವನ್ನು ಸ್ವಚ್ಛಗೊಳಿಸಲಾಗುತ್ತದೆ.">Data is cleaned, normalized, and validated to remove noise before analysis.</div>
+  </div>
+  <div class="step-card">
+    <div class="step-num">3</div>
+    <div class="step-icon"><i class="fas fa-brain"></i></div>
+    <div class="step-title" data-en="AI Prediction" data-hi="एआई भविष्यवाणी" data-kn="AI ಮುನ್ಸೂಚನೆ">AI Prediction</div>
+    <div class="step-desc" data-en="Logistic Regression and SVM models classify outbreak risk as Low, Medium, or High." data-hi="ML मॉडल प्रकोप जोखिम को वर्गीकृत करते हैं।" data-kn="ML ಮಾದರಿಗಳು ಸ್ಫೋಟ ಅಪಾಯವನ್ನು ವರ್ಗೀಕರಿಸುತ್ತವೆ.">Logistic Regression and SVM models classify outbreak risk as Low, Medium, or High.</div>
+  </div>
+  <div class="step-card">
+    <div class="step-num">4</div>
+    <div class="step-icon"><i class="fas fa-bell"></i></div>
+    <div class="step-title" data-en="Alert &amp; Action" data-hi="अलर्ट और कार्रवाई" data-kn="ಎಚ್ಚರಿಕೆ ಮತ್ತು ಕ್ರಮ">Alert &amp; Action</div>
+    <div class="step-desc" data-en="High-risk zones trigger automatic notifications to health officials for immediate response." data-hi="उच्च जोखिम क्षेत्र स्वचालित अधिसूचनाएं ट्रिगर करते हैं।" data-kn="ಹೆಚ್ಚಿನ ಅಪಾಯದ ಪ್ರದೇಶಗಳು ಸ್ವಯಂಚಾಲಿತ ಅಧಿಸೂಚನೆಗಳನ್ನು ಪ್ರಚೋದಿಸುತ್ತವೆ.">High-risk zones trigger automatic notifications to health officials for immediate response.</div>
+  </div>
+</div>
+
+<!-- HYGIENE -->
+<div class="hygiene-wrap">
+  <div class="hygiene-header">
+    <i class="fas fa-hand-holding-heart" style="color:#0f6b9b;"></i>
+    <span data-en="Hygiene Instructions &amp; Prevention Tips" data-hi="स्वच्छता निर्देश और रोकथाम युक्तियाँ" data-kn="ನೈರ್ಮಲ್ಯ ಸೂಚನೆಗಳು ಮತ್ತು ತಡೆಗಟ್ಟುವ ಸಲಹೆಗಳು">Hygiene Instructions &amp; Prevention Tips</span>
+  </div>
+  <div class="hygiene-grid">
+    <div class="hygiene-item">
+      <div class="hygiene-item-icon"><i class="fas fa-hands-wash"></i></div>
+      <h6 data-en="Hand Hygiene" data-hi="हाथ की स्वच्छता" data-kn="ಕೈ ನೈರ್ಮಲ್ಯ">Hand Hygiene</h6>
+      <p data-en="Wash hands with soap for at least 20 seconds, especially before eating and after using the toilet." data-hi="खाने से पहले और शौचालय के बाद 20 सेकंड साबुन से हाथ धोएं।" data-kn="ತಿನ್ನುವ ಮೊದಲು ಮತ್ತು ಶೌಚಾಲಯ ನಂತರ 20 ಸೆಕೆಂಡ್ ಸಾಬೂನಿನಿಂದ ಕೈ ತೊಳೆಯಿರಿ.">Wash hands with soap for at least 20 seconds, especially before eating and after using the toilet.</p>
+    </div>
+    <div class="hygiene-item">
+      <div class="hygiene-item-icon"><i class="fas fa-tint"></i></div>
+      <h6 data-en="Water Safety" data-hi="जल सुरक्षा" data-kn="ನೀರಿನ ಸುರಕ್ಷತೆ">Water Safety</h6>
+      <p data-en="Always drink boiled or filtered water. Store water in clean, covered containers. Avoid unknown sources." data-hi="हमेशा उबला या फ़िल्टर पानी पिएं। अज्ञात स्रोतों से बचें।" data-kn="ಯಾವಾಗಲೂ ಕುದಿಸಿದ ಅಥವಾ ಫಿಲ್ಟರ್ ನೀರನ್ನು ಕುಡಿಯಿರಿ.">Always drink boiled or filtered water. Store water in clean, covered containers. Avoid unknown sources.</p>
+    </div>
+    <div class="hygiene-item">
+      <div class="hygiene-item-icon"><i class="fas fa-utensils"></i></div>
+      <h6 data-en="Food Safety" data-hi="खाद्य सुरक्षा" data-kn="ಆಹಾರ ಸುರಕ್ಷತೆ">Food Safety</h6>
+      <p data-en="Eat freshly cooked food. Wash fruits and vegetables thoroughly. Avoid street food during outbreak periods." data-hi="ताजा पका भोजन खाएं। फलों और सब्जियों को अच्छी तरह धोएं।" data-kn="ತಾಜಾ ಬೇಯಿಸಿದ ಆಹಾರ ಸೇವಿಸಿ. ಹಣ್ಣು ಮತ್ತು ತರಕಾರಿ ಚೆನ್ನಾಗಿ ತೊಳೆಯಿರಿ.">Eat freshly cooked food. Wash fruits and vegetables thoroughly. Avoid street food during outbreak periods.</p>
+    </div>
+    <div class="hygiene-item">
+      <div class="hygiene-item-icon"><i class="fas fa-toilet"></i></div>
+      <h6 data-en="Sanitation" data-hi="स्वच्छता" data-kn="ನೈರ್ಮಲ್ಯ">Sanitation</h6>
+      <p data-en="Use proper toilets. Keep surroundings clean. Dispose of waste correctly to prevent contamination." data-hi="उचित शौचालयों का उपयोग करें। कचरे का उचित निपटान करें।" data-kn="ಸರಿಯಾದ ಶೌಚಾಲಯಗಳನ್ನು ಬಳಸಿ. ತ್ಯಾಜ್ಯ ಸರಿಯಾಗಿ ವಿಲೇವಾರಿ ಮಾಡಿ.">Use proper toilets. Keep surroundings clean. Dispose of waste correctly to prevent contamination.</p>
+    </div>
+    <div class="hygiene-item">
+      <div class="hygiene-item-icon"><i class="fas fa-shield-virus"></i></div>
+      <h6 data-en="Disease Prevention" data-hi="रोग निवारण" data-kn="ರೋಗ ತಡೆಗಟ್ಟುವಿಕೆ">Disease Prevention</h6>
+      <p data-en="Get vaccinated. Seek medical attention immediately if symptoms like diarrhea or fever develop." data-hi="टीका लगवाएं। दस्त या बुखार के लक्षण होने पर तुरंत चिकित्सा लें।" data-kn="ಲಸಿಕೆ ಹಾಕಿಸಿಕೊಳ್ಳಿ. ಭೇದಿ ಅಥವಾ ಜ್ವರ ಕಂಡರೆ ತಕ್ಷಣ ವೈದ್ಯಕೀಯ ನೆರವು ಪಡೆಯಿರಿ.">Get vaccinated. Seek medical attention immediately if symptoms like diarrhea or fever develop.</p>
+    </div>
+    <div class="hygiene-item">
+      <div class="hygiene-item-icon"><i class="fas fa-users"></i></div>
+      <h6 data-en="Community Awareness" data-hi="सामुदायिक जागरूकता" data-kn="ಸಮುದಾಯ ಜಾಗೃತಿ">Community Awareness</h6>
+      <p data-en="Report water quality issues early. Share hygiene knowledge with neighbors and family members." data-hi="पानी की समस्याओं की शीघ्र रिपोर्ट करें। पड़ोसियों के साथ स्वच्छता ज्ञान साझा करें।" data-kn="ನೀರಿನ ಸಮಸ್ಯೆಗಳನ್ನು ಮುಂಚೆಯೇ ವರದಿ ಮಾಡಿ.">Report water quality issues early. Share hygiene knowledge with neighbors and family members.</p>
+    </div>
+  </div>
+</div>
+
+<!-- FAQ -->
+<div class="sec-eyebrow" data-en="FAQ" data-hi="अक्सर पूछे जाने वाले प्रश्न" data-kn="ಪ್ರಶ್ನೆಗಳು">FAQ</div>
+<div class="sec-title" data-en="Frequently asked questions" data-hi="अक्सर पूछे जाने वाले प्रश्न" data-kn="ಪದೇ ಪದೇ ಕೇಳಲಾಗುವ ಪ್ರಶ್ನೆಗಳು">Frequently asked questions</div>
+<div class="sec-sub" data-en="Everything you need to know about the system." data-hi="सिस्टम के बारे में आपको जो कुछ जानने की जरूरत है।" data-kn="ವ್ಯವಸ್ಥೆಯ ಬಗ್ಗೆ ನೀವು ತಿಳಿದುಕೊಳ್ಳಬೇಕಾದ ಎಲ್ಲವೂ.">Everything you need to know about the system.</div>
+
+<div class="faq-wrap" id="faqAccordion">
+  <div class="faq-item">
+    <button class="faq-btn" type="button" data-bs-toggle="collapse" data-bs-target="#faq1" aria-expanded="false">
+      <span data-en="What is this surveillance system?" data-hi="यह निगरानी प्रणाली क्या है?" data-kn="ಈ ನಿಗಾ ವ್ಯವಸ್ಥೆ ಎಂದರೇನು?">What is this surveillance system?</span>
+      <i class="fas fa-chevron-down"></i>
+    </button>
+    <div id="faq1" class="collapse">
+      <div class="faq-body">
+        <p data-en="This is an AI-based water-borne disease surveillance and early warning system developed by the Department of Information Science, Dayananda Sagar College of Engineering. It uses machine learning to analyze water quality data and predict disease outbreak risks, serving citizens, ASHA workers, and health officials." data-hi="यह एक AI-आधारित जलजनित रोग निगरानी और प्रारंभिक चेतावनी प्रणाली है।" data-kn="ಇದು AI ಆಧಾರಿತ ಜಲಜನ್ಯ ರೋಗ ನಿಗಾ ಮತ್ತು ಮುಂಚೇತರ ಎಚ್ಚರಿಕೆ ವ್ಯವಸ್ಥೆ.">This is an AI-based water-borne disease surveillance and early warning system developed by the Department of Information Science, Dayananda Sagar College of Engineering. It uses machine learning to analyze water quality data and predict disease outbreak risks, serving citizens, ASHA workers, and health officials.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-btn" type="button" data-bs-toggle="collapse" data-bs-target="#faq2" aria-expanded="false">
+      <span data-en="Who can use this system?" data-hi="इस प्रणाली का उपयोग कौन कर सकता है?" data-kn="ಈ ವ್ಯವಸ್ಥೆಯನ್ನು ಯಾರು ಬಳಸಬಹುದು?">Who can use this system?</span>
+      <i class="fas fa-chevron-down"></i>
+    </button>
+    <div id="faq2" class="collapse">
+      <div class="faq-body">
+        <p data-en="Three types of users: Local Citizens who report water quality issues and health symptoms; ASHA Workers who submit field data and receive AI predictions; and Health Officials who monitor trends and manage the system through the admin dashboard." data-hi="तीन प्रकार के उपयोगकर्ता: स्थानीय नागरिक, ASHA कार्यकर्ता, और स्वास्थ्य अधिकारी।" data-kn="ಮೂರು ರೀತಿಯ ಬಳಕೆದಾರರು: ಸ್ಥಳೀಯ ನಾಗರಿಕರು, ASHA ಕಾರ್ಯಕರ್ತರು ಮತ್ತು ಆರೋಗ್ಯ ಅಧಿಕಾರಿಗಳು.">Three types of users: Local Citizens who report water quality issues and health symptoms; ASHA Workers who submit field data and receive AI predictions; and Health Officials who monitor trends and manage the system through the admin dashboard.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-btn" type="button" data-bs-toggle="collapse" data-bs-target="#faq3" aria-expanded="false">
+      <span data-en="How accurate are the AI predictions?" data-hi="एआई भविष्यवाणियां कितनी सटीक हैं?" data-kn="AI ಮುನ್ಸೂಚನೆಗಳು ಎಷ್ಟು ನಿಖರ?">How accurate are the AI predictions?</span>
+      <i class="fas fa-chevron-down"></i>
+    </button>
+    <div id="faq3" class="collapse">
+      <div class="faq-body">
+        <p data-en="The system achieves 85–92% accuracy using Logistic Regression and Support Vector Machine (SVM) models. The F1 score ranges from 0.80 to 0.90, making it reliable for early warning and prevention." data-hi="सिस्टम 85-92% सटीकता प्राप्त करता है।" data-kn="ವ್ಯವಸ್ಥೆಯು 85-92% ನಿಖರತೆ ಸಾಧಿಸುತ್ತದೆ.">The system achieves 85–92% accuracy using Logistic Regression and Support Vector Machine (SVM) models. The F1 score ranges from 0.80 to 0.90, making it reliable for early warning and prevention.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-btn" type="button" data-bs-toggle="collapse" data-bs-target="#faq4" aria-expanded="false">
+      <span data-en="How can I report a water quality issue?" data-hi="मैं जल गुणवत्ता की समस्या की रिपोर्ट कैसे करूं?" data-kn="ನಾನು ನೀರಿನ ಗುಣಮಟ್ಟದ ಸಮಸ್ಯೆಯನ್ನು ಹೇಗೆ ವರದಿ ಮಾಡಬಹುದು?">How can I report a water quality issue?</span>
+      <i class="fas fa-chevron-down"></i>
+    </button>
+    <div id="faq4" class="collapse">
+      <div class="faq-body">
+        <p data-en="Register or login through the Local Citizen Portal, then fill out the complaint form with your location, observed symptoms, and water quality issues. Your report will be forwarded to local health officials for action." data-hi="लोकल सिटीजन पोर्टल के माध्यम से रजिस्टर या लॉगिन करें।" data-kn="ಲೋಕಲ್ ಸಿಟಿಜನ್ ಪೋರ್ಟಲ್ ಮೂಲಕ ನೋಂದಾಯಿಸಿ ಅಥವಾ ಲಾಗಿನ್ ಮಾಡಿ.">Register or login through the Local Citizen Portal, then fill out the complaint form with your location, observed symptoms, and water quality issues. Your report will be forwarded to local health officials for action.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-btn" type="button" data-bs-toggle="collapse" data-bs-target="#faq5" aria-expanded="false">
+      <span data-en="What do the different risk levels mean?" data-hi="विभिन्न जोखिम स्तरों का क्या अर्थ है?" data-kn="ವಿವಿಧ ಅಪಾಯದ ಮಟ್ಟಗಳ ಅರ್ಥವೇನು?">What do the different risk levels mean?</span>
+      <i class="fas fa-chevron-down"></i>
+    </button>
+    <div id="faq5" class="collapse">
+      <div class="faq-body">
+        <div class="risk-grid">
+          <div class="risk-box low">
+            <div class="risk-icon"><i class="fas fa-check-circle"></i></div>
+            <div class="risk-label" data-en="Low Risk" data-hi="निम्न जोखिम" data-kn="ಕಡಿಮೆ ಅಪಾಯ">Low Risk</div>
+            <div class="risk-desc" data-en="Water quality is acceptable. Continue regular monitoring." data-hi="पानी की गुणवत्ता स्वीकार्य है।" data-kn="ನೀರಿನ ಗುಣಮಟ್ಟ ಸ್ವೀಕಾರಾರ್ಹ.">Water quality is acceptable. Continue regular monitoring.</div>
+          </div>
+          <div class="risk-box medium">
+            <div class="risk-icon"><i class="fas fa-exclamation-triangle"></i></div>
+            <div class="risk-label" data-en="Medium Risk" data-hi="मध्यम जोखिम" data-kn="ಮಧ್ಯಮ ಅಪಾಯ">Medium Risk</div>
+            <div class="risk-desc" data-en="Some concerns detected. Increase monitoring and preventive measures." data-hi="कुछ चिंताओं का पता चला।" data-kn="ಕೆಲವು ಕಾಳಜಿಗಳು ಪತ್ತೆ.">Some concerns detected. Increase monitoring and take preventive measures.</div>
+          </div>
+          <div class="risk-box high">
+            <div class="risk-icon"><i class="fas fa-bell"></i></div>
+            <div class="risk-label" data-en="High Risk" data-hi="उच्च जोखिम" data-kn="ಹೆಚ್ಚಿನ ಅಪಾಯ">High Risk</div>
+            <div class="risk-desc" data-en="Critical situation. Immediate intervention and public health action required." data-hi="गंभीर स्थिति। तत्काल हस्तक्षेप आवश्यक।" data-kn="ಗಂಭೀರ ಪರಿಸ್ಥಿತಿ. ತಕ್ಷಣ ಕ್ರಮ ಅಗತ್ಯ.">Critical situation. Immediate intervention and public health action required.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-btn" type="button" data-bs-toggle="collapse" data-bs-target="#faq6" aria-expanded="false">
+      <span data-en="Is this system available in multiple languages?" data-hi="क्या यह प्रणाली कई भाषाओं में उपलब्ध है?" data-kn="ಈ ವ್ಯವಸ್ಥೆಯು ಬಹು ಭಾಷೆಗಳಲ್ಲಿ ಲಭ್ಯವಿದೆಯೇ?">Is this system available in multiple languages?</span>
+      <i class="fas fa-chevron-down"></i>
+    </button>
+    <div id="faq6" class="collapse">
+      <div class="faq-body">
+        <p data-en="Yes. The system supports English, Hindi, and Kannada. Use the Language option in the navigation bar to switch at any time." data-hi="हाँ, हमारी प्रणाली अंग्रेजी, हिंदी और कन्नड़ का समर्थन करती है।" data-kn="ಹೌದು. ವ್ಯವಸ್ಥೆಯು ಇಂಗ್ಲಿಷ್, ಹಿಂದಿ ಮತ್ತು ಕನ್ನಡವನ್ನು ಬೆಂಬಲಿಸುತ್ತದೆ.">Yes. The system supports English, Hindi, and Kannada. Use the Language option in the navigation bar to switch at any time.</p>
+        <div class="lang-grid">
+          <div class="lang-box"><i class="fas fa-globe"></i>English</div>
+          <div class="lang-box"><i class="fas fa-globe"></i>हिंदी (Hindi)</div>
+          <div class="lang-box"><i class="fas fa-globe"></i>ಕನ್ನಡ (Kannada)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const ctx = document.getElementById('statsChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Water Tests', 'Complaints', 'Communities', 'Prevented'],
+      datasets: [{
+        label: 'Impact Metrics',
+        data: [1245, 342, 156, 23],
+        backgroundColor: ['#0f6b9b', '#0d9488', '#4d7a94', '#0a4e76'],
+        borderWidth: 0,
+        borderRadius: 6,
+        borderSkipped: false
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: {
+        legend: { display: false }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          grid: { color: 'rgba(0,0,0,0.04)' },
+          ticks: { color: '#4d7a94', font: { size: 11 } }
+        },
+        x: {
+          grid: { display: false },
+          ticks: { color: '#2a4a5e', font: { size: 11 } }
+        }
+      }
+    }
+  });
+
+  document.querySelectorAll('.wqi-bar-fill').forEach(function(bar) {
+    const w = bar.style.width;
+    bar.style.width = '0';
+    setTimeout(function() { bar.style.width = w; }, 500);
+  });
+
+  document.querySelectorAll('.faq-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      const expanded = this.getAttribute('aria-expanded') === 'true';
+      this.setAttribute('aria-expanded', !expanded);
+    });
+  });
+});
+
+function updateLanguage() {
+  const lang = localStorage.getItem('language') || 'en';
+  document.querySelectorAll('[data-en]').forEach(function(el) {
+    const text = el.getAttribute('data-' + lang);
+    if (text) {
+      if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+        el.placeholder = text;
+      } else {
+        el.innerHTML = text;
+      }
+    }
+  });
+}
+
+updateLanguage();
+
+window.addEventListener('storage', function(e) {
+  if (e.key === 'language') updateLanguage();
+});
+</script>
+{% endblock %}

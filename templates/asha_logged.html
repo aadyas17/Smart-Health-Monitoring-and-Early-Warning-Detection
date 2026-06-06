@@ -1,0 +1,415 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+@keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:none; } }
+
+body { background:#f8fafc !important; }
+
+.asha-page { font-family:'Inter', 'Roboto', system-ui, sans-serif; }
+
+.welcome-bar {
+  background:#fff; border:1px solid rgba(13,148,136,0.12); border-radius:14px;
+  padding:24px; margin-bottom:18px;
+  display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px;
+  box-shadow:0 1px 3px rgba(13,31,45,0.04),0 4px 12px rgba(13,31,45,0.06);
+  animation:fadeUp 0.4s ease both;
+}
+
+.welcome-left { display:flex; align-items:center; gap:14px; }
+.welcome-avatar { width:44px; height:44px; background:#f0fdf4; color:#0d9488; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:18px; }
+.welcome-text h4 { font-size:18px; font-weight:600; color:#0d1f2d; margin-bottom:3px; }
+.welcome-text p  { font-size:14px; color:#4d7a94; margin:0; }
+
+.action-row {
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:14px;
+  margin-bottom:18px;
+}
+
+@media (max-width:900px) {
+  .action-row { grid-template-columns:1fr; }
+}
+
+.action-btn {
+  border-radius:12px;
+  padding:14px 16px;
+  text-decoration:none;
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  border:1px solid #d5e7f0;
+  background:#ffffff;
+  transition:all 0.18s;
+}
+
+.action-btn i {
+  font-size:14px;
+  margin-top:2px;
+}
+
+.action-title {
+  font-size:14px;
+  font-weight:600;
+  color:#0d1f2d;
+  line-height:1.2;
+}
+
+.action-sub {
+  margin-top:4px;
+  font-size:10px;
+  color:#7a90a1;
+  line-height:1.4;
+}
+
+.action-primary {
+  background:#0f766e;
+  border-color:#0f766e;
+  box-shadow:0 4px 12px rgba(15,118,110,0.2);
+}
+
+.action-primary .action-title,
+.action-primary .action-sub,
+.action-primary i {
+  color:#ffffff;
+}
+
+.action-primary:hover {
+  background:#0c655e;
+  border-color:#0c655e;
+  transform:translateY(-1px);
+}
+
+.action-outline {
+  border:2px solid #0f766e;
+  background:#f8fffd;
+}
+
+.action-outline i,
+.action-outline .action-title {
+  color:#0f766e;
+}
+
+.action-outline:hover {
+  background:#eefcf8;
+}
+
+.action-soft:hover {
+  background:#f8fbfe;
+}
+
+.stat-row { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:24px; }
+@media (max-width:600px) { .stat-row { grid-template-columns:1fr; } }
+
+.stat-card {
+  background:#fff; border:1px solid rgba(15,107,155,0.1); border-radius:12px;
+  padding:24px; box-shadow:0 1px 3px rgba(13,31,45,0.04),0 4px 12px rgba(13,31,45,0.06);
+  animation:fadeUp 0.5s ease both;
+}
+.stat-card:nth-child(2) { animation-delay:0.06s; }
+.stat-card:nth-child(3) { animation-delay:0.12s; }
+
+.stat-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.stat-icon i { font-weight:900; font-size:15px; }
+
+.stat-card:nth-child(1) .stat-icon { background:#eff8ff; color:#0f6b9b; }
+.stat-card:nth-child(2) .stat-icon { background:#fff7ed; color:#b45309; }
+.stat-card:nth-child(3) .stat-icon { background:#ecfdf3; color:#166534; }
+.stat-val { font-size:2rem; font-weight:600; color:#0d1f2d; line-height:1; }
+.stat-label { font-size:14px; color:#4d7a94; margin-top:6px; }
+
+.panel {
+  background:#fff; border:1px solid rgba(15,107,155,0.1); border-radius:14px;
+  box-shadow:0 1px 3px rgba(13,31,45,0.04),0 4px 12px rgba(13,31,45,0.06);
+  overflow:hidden; animation:fadeUp 0.5s ease both;
+}
+
+.panel-header {
+  padding:20px 24px; border-bottom:1px solid #dce8f1;
+  font-size:15px; font-weight:600; color:#0d1f2d;
+  display:flex; align-items:center; gap:8px;
+}
+.panel-header i { color:#7fa6bc; font-size:14px; }
+.panel-body { padding:24px; }
+
+table { width:100%; border-collapse:collapse; font-size:14px; }
+thead th {
+  background:#f4f8fb; color:#4d7a94; font-size:12px; font-weight:600;
+  text-transform:uppercase; letter-spacing:0.06em;
+  padding:12px 16px; border-bottom:1px solid #e8f1f7; white-space:nowrap;
+}
+tbody td { padding:13px 16px; border-bottom:1px solid #eaf2f8; color:#2a4a5e; vertical-align:middle; }
+tbody tr:last-child td { border-bottom:none; }
+tbody tr:hover td { background:#f9fbfd; }
+
+.risk-badge {
+  display:inline-block; font-size:11px; font-weight:500;
+  padding:3px 10px; border-radius:20px;
+}
+.risk-high   { background:#fee2e2; color:#991b1b; }
+.risk-medium { background:#fef3c7; color:#92400e; }
+.risk-low    { background:#dcfce7; color:#166534; }
+
+.complaint-list {
+  padding: 24px;
+}
+
+.complaint-feed-item {
+  border: 1px solid #d6e4ee;
+  background: #f8fbfe;
+  border-radius: 10px;
+  padding: 18px;
+  margin-bottom: 10px;
+}
+
+.complaint-feed-item:last-child {
+  margin-bottom: 0;
+}
+
+.complaint-feed-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.complaint-feed-loc {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: #0d1f2d;
+}
+
+.complaint-feed-meta {
+  font-size: 13.5px;
+  color: #4d7a94;
+  line-height: 1.5;
+}
+
+.complaint-feed-desc {
+  margin-top: 6px;
+  font-size: 13.8px;
+  color: #2a4a5e;
+}
+
+.status-indicator {
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-size:12px;
+  font-weight:600;
+}
+
+.status-indicator i { font-size:10px; }
+
+.indicator-new { color:#2563eb; }
+.indicator-awaiting { color:#b45309; }
+.indicator-verified { color:#166534; }
+
+.status-badge {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 11px;
+  border-radius: 999px;
+}
+
+.status-pending { background: #fef3c7; color: #b45309; }
+.status-verified, .status-resolved { background: #dcfce7; color: #166534; }
+</style>
+
+<div class="asha-page">
+<div class="welcome-bar">
+  <div class="welcome-left">
+    <div class="welcome-avatar"><i class="fas fa-user-nurse"></i></div>
+    <div class="welcome-text">
+      <h4>Welcome, <span id="ashaName"></span></h4>
+      <p>ASHA Field Portal - monitor predictions and field data</p>
+    </div>
+  </div>
+</div>
+
+<div class="action-row">
+  <a href="#complaintsPanel" class="action-btn action-primary">
+    <i class="fas fa-list"></i>
+    <div>
+      <div class="action-title">View Citizen Reports</div>
+      <div class="action-sub">Check symptoms reported by local citizens.</div>
+    </div>
+  </a>
+  <a href="/asha/predict" class="action-btn action-outline" onclick="window.location.href='/asha/predict'; return false;">
+    <i class="fas fa-plus"></i>
+    <div>
+      <div class="action-title">Register New Field Data</div>
+      <div class="action-sub">Log pH, Turbidity, and Bacterial counts.</div>
+    </div>
+  </a>
+  <a href="#predictionsPanel" class="action-btn action-soft">
+    <i class="fas fa-history"></i>
+    <div>
+      <div class="action-title">View Past Records</div>
+      <div class="action-sub">Review prediction timeline and trends.</div>
+    </div>
+  </a>
+</div>
+
+<div class="stat-row">
+  <div class="stat-card">
+    <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+    <div class="stat-val" id="totalPredictions">0</div>
+    <div class="stat-label">Total predictions</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
+    <div class="stat-val" id="highRiskCount">0</div>
+    <div class="stat-label">High risk areas</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+    <div class="stat-val" id="lowRiskCount">0</div>
+    <div class="stat-label">Low risk areas</div>
+  </div>
+</div>
+
+<div class="panel" id="predictionsPanel">
+  <div class="panel-header">
+    <i class="fas fa-history"></i>
+    Prediction History
+  </div>
+  <div class="panel-body">
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Location</th>
+            <th>Temp</th>
+            <th>Rainfall</th>
+            <th>pH</th>
+            <th>Turbidity</th>
+            <th>Risk Level</th>
+          </tr>
+        </thead>
+        <tbody id="predictionsList">
+          <tr><td colspan="7" style="text-align:center;color:#8fb8cc;padding:32px;">Loading predictions...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="panel" id="complaintsPanel" style="margin-top:16px;">
+  <div class="panel-header">
+    
+    Citizen Complaints Feed
+  </div>
+  <div class="panel-body complaint-list" id="ashaComplaintsList">
+    <p style="font-size:13px;color:#8fb8cc;text-align:center;padding:12px 0;">Loading citizen complaints...</p>
+  </div>
+</div>
+
+<script>
+const ashaId = localStorage.getItem('asha_id');
+document.getElementById('ashaName').textContent = localStorage.getItem('asha_name') || 'ASHA Worker';
+const ashaArea = localStorage.getItem('asha_area') || '';
+
+async function loadPredictions() {
+  try {
+    const response = await axios.get('/api/asha/predictions?asha_id=' + ashaId);
+    const predictions = response.data;
+
+    document.getElementById('totalPredictions').textContent = predictions.length;
+    document.getElementById('highRiskCount').textContent = predictions.filter(function(p) { return p.prediction === 'High'; }).length;
+    document.getElementById('lowRiskCount').textContent = predictions.filter(function(p) { return p.prediction === 'Low'; }).length;
+
+    const tbody = document.getElementById('predictionsList');
+    if (predictions.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#8fb8cc;padding:32px;">No predictions yet. Use the New Prediction button to get started.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = predictions.map(function(p) {
+      var riskClass = p.prediction === 'High' ? 'risk-high' : (p.prediction === 'Medium' ? 'risk-medium' : 'risk-low');
+      return '<tr>' +
+        '<td>' + new Date(p.date).toLocaleDateString() + '</td>' +
+        '<td>' + (p.location || 'N/A') + '</td>' +
+        '<td>' + p.temperature + '&deg;C</td>' +
+        '<td>' + p.rainfall + ' mm</td>' +
+        '<td>' + p.ph + '</td>' +
+        '<td>' + p.turbidity + ' NTU</td>' +
+        '<td><span class="risk-badge ' + riskClass + '">' + p.prediction + '</span></td>' +
+        '</tr>';
+    }).join('');
+  } catch (error) {
+    document.getElementById('predictionsList').innerHTML = '<tr><td colspan="7" style="text-align:center;color:#be3a3a;padding:32px;">Error loading predictions.</td></tr>';
+  }
+}
+
+async function loadAshaComplaints() {
+  try {
+    const endpoint = ashaArea
+      ? '/api/asha/complaints?area=' + encodeURIComponent(ashaArea)
+      : '/api/asha/complaints';
+
+    const response = await axios.get(endpoint);
+    const complaints = response.data;
+    const container = document.getElementById('ashaComplaintsList');
+
+    if (!complaints.length) {
+      container.innerHTML = '<p style="font-size:13px;color:#8fb8cc;text-align:center;padding:12px 0;">No citizen complaints found for your area yet.</p>';
+      return;
+    }
+
+    container.innerHTML = complaints.map(function(c) {
+      var rawStatus = (c.status || 'pending').toLowerCase();
+      var statusClass = rawStatus === 'resolved' || rawStatus === 'verified' ? 'status-resolved' : 'status-pending';
+      var indicatorClass = 'indicator-new';
+      var indicatorText = 'New Report';
+      var indicatorIcon = 'fas fa-circle';
+
+      if (rawStatus === 'pending') {
+        indicatorClass = 'indicator-awaiting';
+        indicatorText = 'Awaiting Field Visit';
+      }
+      if (rawStatus === 'resolved' || rawStatus === 'verified') {
+        indicatorClass = 'indicator-verified';
+        indicatorText = 'Verified & Syncing to ML Model';
+        indicatorIcon = 'fas fa-check-circle';
+      }
+
+      var symptomsText = c.symptoms && c.symptoms.length ? c.symptoms.join(', ') : 'None';
+      var waterIssuesText = c.water_issues && c.water_issues.length ? c.water_issues.join(', ') : 'None';
+      return '<div class="complaint-feed-item">' +
+        '<div class="complaint-feed-top">' +
+          '<div class="complaint-feed-loc">' + (c.location || 'N/A') + (c.sub_location ? ' - ' + c.sub_location : '') + '</div>' +
+          '<span class="status-badge ' + statusClass + '">' + (c.status || 'pending') + '</span>' +
+        '</div>' +
+        '<div class="status-indicator ' + indicatorClass + '"><i class="' + indicatorIcon + '"></i> ' + indicatorText + '</div>' +
+        '<div class="complaint-feed-meta">Reported by: ' + (c.local_name || 'Citizen') + ' | ' + new Date(c.created_at).toLocaleString() + '</div>' +
+        '<div class="complaint-feed-meta">Symptoms: ' + symptomsText + '</div>' +
+        '<div class="complaint-feed-meta">Water issues: ' + waterIssuesText + '</div>' +
+        (c.description ? '<div class="complaint-feed-desc">' + c.description + '</div>' : '') +
+      '</div>';
+    }).join('');
+  } catch (error) {
+    document.getElementById('ashaComplaintsList').innerHTML = '<p style="font-size:13px;color:#be3a3a;text-align:center;padding:12px 0;">Error loading citizen complaints.</p>';
+  }
+}
+
+loadPredictions();
+loadAshaComplaints();
+setInterval(loadPredictions, 30000);
+setInterval(loadAshaComplaints, 30000);
+</script>
+</div>
+{% endblock %}

@@ -1,0 +1,539 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+@keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:none; } }
+
+body { background: #f8fafc !important; }
+
+.welcome-bar {
+  background: #fff;
+  border: 1px solid rgba(15,107,155,0.1);
+  border-radius: 14px;
+  padding: 24px 28px;
+  margin-bottom: 28px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 1px 3px rgba(13,31,45,0.04), 0 4px 12px rgba(13,31,45,0.06);
+  animation: fadeUp 0.4s ease both;
+}
+
+.welcome-avatar {
+  width: 44px; height: 44px;
+  background: #eff8ff;
+  color: #0f6b9b;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.welcome-text h4 { font-size: 17px; font-weight: 500; color: #0d1f2d; margin-bottom: 2px; }
+.welcome-text p  { font-size: 13.8px; color: #4d7a94; margin: 0; }
+
+.main-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-items: start;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 768px) { .main-grid { grid-template-columns: 1fr; } }
+
+.panel {
+  background: #ffffff;
+  border: 1px solid rgba(15,107,155,0.1);
+  border-radius: 14px;
+  box-shadow: 0 1px 3px rgba(13,31,45,0.04), 0 4px 12px rgba(13,31,45,0.06);
+  overflow: hidden;
+  animation: fadeUp 0.5s ease both;
+}
+
+.panel:nth-child(2) { animation-delay: 0.08s; }
+
+.panel-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid #d7e4ee;
+  font-size: 15px;
+  font-weight: 600;
+  color: #0d1f2d;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.panel-header i { color: #8fb8cc; font-size: 14px; }
+.panel-body { padding: 20px; }
+
+.form-group { margin-bottom: 12px; }
+
+.form-label {
+  display: block;
+  font-size: 12.8px;
+  font-weight: 600;
+  color: #4d7a94;
+  margin-bottom: 8px;
+  letter-spacing: 0.01em;
+}
+
+.form-control, .form-select {
+  width: 100%;
+  padding: 9px 13px;
+  font-size: 14px;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  border: 1px solid #dceaf3;
+  border-radius: 8px;
+  background: #f4f8fb;
+  color: #0d1f2d;
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+  box-sizing: border-box;
+}
+
+.form-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding-right: 36px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='M5 7.5L10 12.5L15 7.5' stroke='%230f6b9b' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 11px center;
+  background-size: 13px 13px;
+}
+
+.form-control:focus, .form-select:focus {
+  outline: none;
+  border-color: #0f6b9b;
+  box-shadow: 0 0 0 3px rgba(15,107,155,0.1);
+  background: #fff;
+}
+
+.check-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-top: 6px;
+  margin-bottom: 10px;
+}
+
+.check-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid #dceaf3;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: all 0.15s;
+  background: #f4f8fb;
+}
+
+.check-item:hover { background: #e8f1f7; border-color: #8fb8cc; }
+.check-item input[type="checkbox"] { accent-color: #0f6b9b; width: 14px; height: 14px; }
+.check-item label { font-size: 13px; color: #2a4a5e; cursor: pointer; margin: 0; }
+
+textarea.form-control { resize: vertical; min-height: 90px; }
+
+.submit-btn {
+  padding: 12px 24px;
+  font-size: 14.5px;
+  font-weight: 600;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  background: #0f6b9b;
+  color: #fff;
+  border: none;
+  border-radius: 9px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(15, 107, 155, 0.25);
+}
+
+.submit-btn:hover { 
+  background: #0d5c87;
+  box-shadow: 0 6px 16px rgba(15, 107, 155, 0.35);
+  transform: translateY(-1px);
+}
+.submit-btn:active { transform: scale(0.97); }
+.submit-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+
+.secondary-btn {
+  padding: 11px 22px;
+  font-size: 13.5px;
+  font-weight: 600;
+  font-family: 'DM Sans', system-ui, sans-serif;
+  background: transparent;
+  color: #0f6b9b;
+  border: 2px solid #0f6b9b;
+  border-radius: 9px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.secondary-btn:hover { 
+  background: #eff8ff;
+  border-color: #0d5c87;
+}
+
+.field-sep {
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #0d1f2d;
+  margin: 14px 0 10px;
+}
+
+.complaint-item {
+  border: 1px solid #d6e4ee;
+  border-radius: 10px;
+  background: #f8fbfe;
+  padding: 20px 24px;
+  margin-bottom: 12px;
+  transition: background 0.15s;
+}
+
+.complaint-item:hover { background: #f1f6fb; }
+.complaint-loc { font-size: 14.5px; font-weight: 600; color: #0d1f2d; margin-bottom: 8px; }
+.complaint-meta { font-size: 13px; color: #4d7a94; }
+
+.status-badge {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 999px;
+}
+
+.status-pending  { background: #fef3c7; color: #b45309; }
+.status-verified { background: #dcfce7; color: #166534; }
+.status-resolved { background: #dcfce7; color: #166534; }
+
+.info-box {
+  border-radius: 10px;
+  padding: 16px 20px;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.info-box h6 { font-size: 14.5px; font-weight: 600; margin-bottom: 12px; }
+.info-box ul { margin: 0; padding-left: 20px; }
+.info-box li { margin-bottom: 6px; line-height: 1.6; }
+
+.info-box.diseases { background: #eff8ff; border: 1px solid #bae0fd; color: #0c4a6e; }
+.info-box.prevent  { background: #f0fdf4; border: 1px solid #bbf7d0; color: #14532d; }
+
+.empathy-box {
+  background: linear-gradient(135deg, #f3f4f6 0%, #fafbfc 100%);
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-top: 28px;
+  text-align: center;
+  color: #4d7a94;
+  font-size: 14.5px;
+  line-height: 1.6;
+}
+
+.empathy-box strong { color: #0d1f2d; font-weight: 600; }
+
+.form-panel-body {
+  padding-bottom: 12px;
+}
+
+.spinner { display:inline-block; width:13px; height:13px; border:2px solid rgba(255,255,255,0.4); border-top-color:#fff; border-radius:50%; animation:spin 0.6s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+</style>
+
+<div class="welcome-bar">
+  <div class="welcome-avatar"><i class="fas fa-user"></i></div>
+  <div class="welcome-text">
+    <h4>Welcome back to Community Health Portal, <span id="userName"></span></h4>
+    <p>Report water quality issues and health complaints in your area</p>
+  </div>
+</div>
+
+<div class="main-grid">
+  <!-- COMPLAINT FORM -->
+  <div class="panel">
+    <div class="panel-header">
+      <i class="fas fa-exclamation-circle"></i>
+      Submit a Complaint
+    </div>
+    <div class="panel-body form-panel-body">
+      <div class="form-group">
+        <label class="form-label">Area in Bangalore Region</label>
+        <select class="form-select" id="area" required>
+          <option value="">Select your area</option>
+          <option value="North Zone">North Zone</option>
+          <option value="South Zone">South Zone</option>
+          <option value="East Zone">East Zone</option>
+          <option value="West Zone">West Zone</option>
+          <option value="Central Zone">Central Zone</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Sub-location</label>
+        <input type="text" class="form-control" id="sub_location" placeholder="Street / Colony / Village name" required>
+      </div>
+
+      <div class="field-sep">Symptoms observed</div>
+      <div class="check-group" style="margin-bottom:14px;">
+        <div class="check-item">
+          <input type="checkbox" id="diarrhea" value="Diarrhea">
+          <label for="diarrhea">Diarrhea</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="fever" value="Fever">
+          <label for="fever">Fever</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="vomiting" value="Vomiting">
+          <label for="vomiting">Vomiting</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="stomach_pain" value="Stomach Pain">
+          <label for="stomach_pain">Stomach Pain</label>
+        </div>
+      </div>
+
+      <div class="field-sep">Water issues</div>
+      <div class="check-group" style="margin-bottom:14px;">
+        <div class="check-item">
+          <input type="checkbox" id="dirty_water" value="Dirty Water">
+          <label for="dirty_water">Dirty Water</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="water_scarcity" value="Water Scarcity">
+          <label for="water_scarcity">Water Scarcity</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="bad_odor" value="Bad Odor">
+          <label for="bad_odor">Bad Odor</label>
+        </div>
+        <div class="check-item">
+          <input type="checkbox" id="discoloration" value="Discoloration">
+          <label for="discoloration">Discoloration</label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Detailed Description</label>
+        <textarea class="form-control" id="description" placeholder="Describe the issue in detail..." required></textarea>
+      </div>
+      <button type="button" class="submit-btn" id="submitBtn" onclick="submitComplaint()">
+       Submit Complaint
+      </button>
+    </div>
+  </div>
+
+  <!-- RIGHT COLUMN -->
+  <div style="display:flex; flex-direction:column; gap:16px;">
+    <div class="panel">
+      <div class="panel-header">
+        <i class="fas fa-history"></i>
+        Your Recent Complaints
+      </div>
+      <div class="panel-body" id="complaintsList">
+        <p style="font-size:13px; color:#8fb8cc; text-align:center; padding:20px 0;">Loading your complaints...</p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <i class="fas fa-info-circle"></i>
+        Health Awareness
+      </div>
+      <div class="panel-body">
+        <div class="info-box diseases">
+          <h6>Common water-borne diseases</h6>
+          <ul>
+            <li>Cholera - severe diarrhea and dehydration</li>
+            <li>Typhoid - high fever, weakness, stomach pain</li>
+            <li>Hepatitis A - jaundice, fatigue, abdominal pain</li>
+            <li>Dysentery - bloody diarrhea and fever</li>
+          </ul>
+        </div>
+        <div class="info-box prevent">
+          <h6>Prevention tips</h6>
+          <ul>
+            <li>Always drink boiled or filtered water</li>
+            <li>Wash hands frequently with soap</li>
+            <li>Keep water storage containers clean</li>
+            <li>Report water quality issues immediately</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="empathy-box">
+  <strong> Your report helps protect your neighborhood</strong><br>
+  Every submission strengthens our community's defense against water-borne diseases. Together, we keep our water safe and our loved ones healthy.
+</div>
+
+<script>
+const localId = localStorage.getItem('local_id');
+document.getElementById('userName').textContent = localStorage.getItem('local_name') || 'User';
+
+const symptomFieldIds = ['diarrhea', 'fever', 'vomiting', 'stomach_pain'];
+const waterIssueFieldIds = ['dirty_water', 'water_scarcity', 'bad_odor', 'discoloration'];
+
+function clearGroupValidity(ids) {
+  ids.forEach(function(id) {
+    document.getElementById(id).setCustomValidity('');
+  });
+}
+
+function validateComplaintForm() {
+  const areaField = document.getElementById('area');
+  const subLocationField = document.getElementById('sub_location');
+
+  areaField.setCustomValidity('');
+  if (!areaField.value) {
+    areaField.setCustomValidity('Please fill in this field.');
+    areaField.reportValidity();
+    return false;
+  }
+
+  subLocationField.setCustomValidity('');
+  if (!subLocationField.value.trim()) {
+    subLocationField.setCustomValidity('Please fill in this field.');
+    subLocationField.reportValidity();
+    return false;
+  }
+
+  const hasSymptoms = symptomFieldIds.some(function(id) {
+    return document.getElementById(id).checked;
+  });
+  if (!hasSymptoms) {
+    const firstSymptomField = document.getElementById(symptomFieldIds[0]);
+    firstSymptomField.setCustomValidity('Please fill in this field.');
+    firstSymptomField.reportValidity();
+    return false;
+  }
+  clearGroupValidity(symptomFieldIds);
+
+  const hasWaterIssue = waterIssueFieldIds.some(function(id) {
+    return document.getElementById(id).checked;
+  });
+  if (!hasWaterIssue) {
+    const firstWaterIssueField = document.getElementById(waterIssueFieldIds[0]);
+    firstWaterIssueField.setCustomValidity('Please fill in this field.');
+    firstWaterIssueField.reportValidity();
+    return false;
+  }
+  clearGroupValidity(waterIssueFieldIds);
+
+  return true;
+}
+
+async function loadComplaints() {
+  try {
+    const response = await axios.get('/api/complaints/' + localId);
+    const complaints = response.data;
+    const div = document.getElementById('complaintsList');
+
+    if (complaints.length === 0) {
+      div.innerHTML = '<p style="font-size:13px;color:#8fb8cc;text-align:center;padding:20px 0;">No complaints submitted yet.</p>';
+      return;
+    }
+
+    div.innerHTML = complaints.map(function(c) {
+      return '<div class="complaint-item">' +
+        '<div class="complaint-loc">' + c.location + (c.sub_location ? ' — ' + c.sub_location : '') + '</div>' +
+        '<div class="complaint-meta">' +
+        (c.symptoms && c.symptoms.length ? '<span style="margin-right:10px;">Symptoms: ' + c.symptoms.join(', ') + '</span>' : '') +
+        '<span class="status-badge status-' + c.status + '">' + c.status + '</span>' +
+        '</div>' +
+        '<div class="complaint-meta" style="margin-top:4px;">' + new Date(c.created_at).toLocaleString() + '</div>' +
+        '</div>';
+    }).join('');
+  } catch (error) {
+    document.getElementById('complaintsList').innerHTML = '<p style="font-size:13px;color:#7c3aed;padding:12px 0;">Error loading complaints.</p>';
+  }
+}
+
+async function submitComplaint() {
+  if (!validateComplaintForm()) {
+    return;
+  }
+
+  const symptoms = [];
+  if (document.getElementById('diarrhea').checked) symptoms.push('Diarrhea');
+  if (document.getElementById('fever').checked) symptoms.push('Fever');
+  if (document.getElementById('vomiting').checked) symptoms.push('Vomiting');
+  if (document.getElementById('stomach_pain').checked) symptoms.push('Stomach Pain');
+
+  const waterIssues = [];
+  if (document.getElementById('dirty_water').checked) waterIssues.push('Dirty Water');
+  if (document.getElementById('water_scarcity').checked) waterIssues.push('Water Scarcity');
+  if (document.getElementById('bad_odor').checked) waterIssues.push('Bad Odor');
+  if (document.getElementById('discoloration').checked) waterIssues.push('Discoloration');
+
+  const btn = document.getElementById('submitBtn');
+  btn.innerHTML = '<span class="spinner"></span> Submitting...';
+  btn.disabled = true;
+
+  try {
+    const response = await axios.post('/api/complaint/submit', {
+      local_id: parseInt(localId),
+      location: document.getElementById('area').value,
+      sub_location: document.getElementById('sub_location').value,
+      symptoms: symptoms,
+      water_issues: waterIssues,
+      description: document.getElementById('description').value
+    });
+
+    if (response.data.success) {
+      alert('Complaint submitted successfully.');
+      document.getElementById('area').value = '';
+      document.getElementById('sub_location').value = '';
+      document.getElementById('description').value = '';
+      ['diarrhea','fever','vomiting','stomach_pain','dirty_water','water_scarcity','bad_odor','discoloration'].forEach(function(id) {
+        document.getElementById(id).checked = false;
+      });
+      loadComplaints();
+    } else {
+      alert('Failed to submit: ' + response.data.message);
+    }
+  } catch (error) {
+    alert('Error submitting complaint. Please try again.');
+  } finally {
+    btn.innerHTML = '<i class="fas fa-paper-plane" style="font-size:12px;"></i> Submit Complaint';
+    btn.disabled = false;
+  }
+}
+
+document.getElementById('area').addEventListener('change', function() {
+  this.setCustomValidity('');
+});
+
+document.getElementById('sub_location').addEventListener('input', function() {
+  this.setCustomValidity('');
+});
+
+symptomFieldIds.forEach(function(id) {
+  document.getElementById(id).addEventListener('change', function() {
+    clearGroupValidity(symptomFieldIds);
+  });
+});
+
+waterIssueFieldIds.forEach(function(id) {
+  document.getElementById(id).addEventListener('change', function() {
+    clearGroupValidity(waterIssueFieldIds);
+  });
+});
+
+loadComplaints();
+</script>
+{% endblock %}
